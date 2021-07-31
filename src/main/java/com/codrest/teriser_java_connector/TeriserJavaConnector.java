@@ -3,7 +3,7 @@
  * Filename : com.codrest.teriser.TeriserJavaConnector
  * Desc :
  */
-package com.codrest.teriser;
+package com.codrest.teriser_java_connector;
 
 public class TeriserJavaConnector {
 }
