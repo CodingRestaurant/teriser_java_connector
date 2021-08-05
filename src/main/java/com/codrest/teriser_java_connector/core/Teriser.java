@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -22,7 +21,7 @@ public class Teriser {
     private String token;
     private MessageReceiver messageReceiver;
 
-    Set<Class> classes = new HashSet<>();
+    Set<Class<?>> classes = new HashSet<>();
     Map<String,Method> methods = new HashMap<>();
     Map<String,Object> instances = new HashMap<>();
 
@@ -33,13 +32,16 @@ public class Teriser {
     }
 
 
-    @SuppressWarnings("unchecked")
+
     public <K> void addModule(Class<K> clazz) {
         classes.add(clazz);
         for (Constructor<?> declaredConstructor : clazz.getDeclaredConstructors()) {
             if(declaredConstructor.getParameterCount() == 0){
                 try {
+
+                    @SuppressWarnings("unchecked")
                     K object = (K) declaredConstructor.newInstance();
+
                     for (Method method : object.getClass().getDeclaredMethods()) {
                         if(method.isAnnotationPresent(Api.class)){
                             Api named = method.getAnnotation(Api.class);
@@ -72,8 +74,6 @@ public class Teriser {
             JsonElement data = jsonObject.get("data");
 
             Method targetMethod = methods.get(methodName);
-            System.out.println(data);
-            System.out.println(targetMethod);
             Object[] args = makeArgs(targetMethod, data.getAsJsonObject());
 
             return (String) targetMethod.invoke(instances.get(methodName),args);
