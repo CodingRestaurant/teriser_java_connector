@@ -15,4 +15,11 @@ public class TestBot2 {
         return "";
     }
 
+    @Api(name="test2")
+    public String testMethod2(CubeData cubeData, User user){
+        System.out.println(cubeData);
+        System.out.println(user);
+        return "";
+    }
+
 }

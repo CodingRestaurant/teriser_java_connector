@@ -131,4 +131,29 @@ public class TeriserJavaConnectorTest {
                 "}");
     }
 
+    @Test
+    @Order(8)
+    @DisplayName("MessageReceiveTest7")
+    public void MessageReceiveTest7() {
+        messageReceiver.onMessageReceived("{\n" +
+                "  \"method\": \"test2\",\n" +
+                "  \"data\": {\n" +
+                "    \"CubeData\": {\n" +
+                "      \"id\": 1234,\n" +
+                "      \"active\": true,\n" +
+                "      \"prob\": 10.1,\n" +
+                "      \"name\": \"cube\",\n" +
+                "      \"user\":{\n" +
+                "        \"id\":123,\n" +
+                "        \"name\":\"pl1\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"User\":{\n" +
+                "        \"id\":128,\n" +
+                "        \"name\":\"hello\"\n" +
+                "        }\n" +
+                "  }\n" +
+                "}\n");
+    }
+
 }
