@@ -102,7 +102,7 @@ public class Teriser {
             Gson gson = new Gson();
             for (Map.Entry<String, JsonElement> namedJsonElement : data.entrySet()) {
                 if(parameterType.getName().endsWith(namedJsonElement.getKey())){
-                    args[i] = gson.fromJson(namedJsonElement.getValue(), parameterType);
+                    args[i++] = gson.fromJson(namedJsonElement.getValue(), parameterType);
                 }
             }
 
