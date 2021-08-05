@@ -32,6 +32,17 @@ public class Teriser {
     }
 
 
+    /**
+     * Add Module to Teriser.
+     *
+     * usage : teriser.addModule(Module.class)
+     *
+     * @param clazz class of Module
+     * @param <K> Type of Module
+     *
+     * @see Api
+     * @see MessageReceiver
+     */
 
     public <K> void addModule(Class<K> clazz) {
         classes.add(clazz);
@@ -67,7 +78,7 @@ public class Teriser {
         methods.forEach((name, method) -> System.out.println(name + ":" + method));
     }
 
-    public String handleMessage(String formattedJson) {
+    private String handleMessage(String formattedJson) {
         try{
             JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
             String methodName = jsonObject.get("method").getAsString();
