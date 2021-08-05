@@ -115,8 +115,18 @@ public class TeriserJavaConnectorTest {
                 "  \"method\": \"test\",\n" +
                 "  \"data\": {\n" +
                 "    \"CubeData\": {\n" +
-                "      \"active\": false\n" +
                 "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("MessageReceiveTest6")
+    public void MessageReceiveTest6() {
+        messageReceiver.onMessageReceived("{\n" +
+                "  \"method\": \"test\",\n" +
+                "  \"data\": {\n" +
                 "  }\n" +
                 "}");
     }
