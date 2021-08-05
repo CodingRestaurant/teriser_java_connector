@@ -79,11 +79,46 @@ public class TeriserJavaConnectorTest {
                 "      \"id\": 1234,\n" +
                 "      \"active\": true,\n" +
                 "      \"prob\": 10.1,\n" +
-                "      \"name\": \"cube\"\n" +
+                "      \"name\": \"cube\",\n" +
+                "      \"user\":{\n" +
+                "        \"id\": 123,\n" +
+                "        \"name\":\"name\"\n" +
+                "      }\n" +
+                "      \n" +
                 "    }\n" +
                 "  }\n" +
                 "}");
     }
 
+    @Test
+    @Order(5)
+    @DisplayName("MessageReceiveTest4")
+    public void MessageReceiveTest4() {
+        messageReceiver.onMessageReceived("{\n" +
+                "  \"method\": \"test\",\n" +
+                "  \"data\": {\n" +
+                "    \"CubeData\": {\n" +
+                "      \"id\": 1234,\n" +
+                "      \"active\": true,\n" +
+                "      \"prob\": 10.1,\n" +
+                "      \"name\": \"item\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("MessageReceiveTest5")
+    public void MessageReceiveTest5() {
+        messageReceiver.onMessageReceived("{\n" +
+                "  \"method\": \"test\",\n" +
+                "  \"data\": {\n" +
+                "    \"CubeData\": {\n" +
+                "      \"active\": false\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
 
 }
