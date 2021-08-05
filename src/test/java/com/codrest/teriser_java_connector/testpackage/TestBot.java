@@ -12,14 +12,13 @@ public class TestBot {
 
     @Api(name = "cube")
     public String cube(){
-        System.out.println("hello!");
-        return "hello!";
+        System.out.println("cube!");
+        return "cube!";
     }
 
     @Api
     public void cube2(User user){
-        System.out.println(user.name);
-        System.out.println(user.id);
+        System.out.println(user);
     }
 
 

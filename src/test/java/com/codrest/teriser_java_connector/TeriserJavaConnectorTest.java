@@ -11,19 +11,34 @@ import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.testpackage.TestBot;
 import com.codrest.teriser_java_connector.testpackage.TestBot2;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TeriserJavaConnectorTest {
 
-    @Test
-    public void AnnotationScanTest() {
+    MessageReceiver messageReceiver;
+    Teriser teriser;
 
-        MessageReceiver messageReceiver = new MessageReceiver();
-        Teriser teriser = TeriserJavaConnector.Make("ABC",messageReceiver);
+    @BeforeAll
+    public void Init(){
+        messageReceiver = new MessageReceiver();
+        teriser = TeriserJavaConnector.Make("ABC", messageReceiver);
+
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName("ModuleAddTest")
+    public void ModuleAddTest(){
         teriser.addModule(TestBot.class);
         teriser.addModule(TestBot2.class);
         teriser.run();
+    }
 
+    @Test
+    @Order(2)
+    @DisplayName("MessageReceiveTest1")
+    public void MessageReceiveTest1() {
         messageReceiver.onMessageReceived("{\n" +
                 "    \"method\":\"cube\",\n" +
                 "    \"data\":{\n" +
@@ -34,16 +49,29 @@ public class TeriserJavaConnectorTest {
                 "    }\n" +
                 "}");
 
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("MessageReceiveTest2")
+    public void MessageReceiveTest2() {
         messageReceiver.onMessageReceived("{\n" +
                 "    \"method\":\"cube2\",\n" +
                 "    \"data\":{\n" +
                 "        \"User\":{\n" +
-                    "        \"id\":128,\n" +
-                    "        \"name\":\"hello\"\n" +
+                "        \"id\":128,\n" +
+                "        \"name\":\"hello\"\n" +
                 "        }\n" +
                 "    }\n" +
                 "}");
 
+
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("MessageReceiveTest3")
+    public void MessageReceiveTest3() {
         messageReceiver.onMessageReceived("{\n" +
                 "  \"method\": \"test\",\n" +
                 "  \"data\": {\n" +
@@ -55,8 +83,6 @@ public class TeriserJavaConnectorTest {
                 "    }\n" +
                 "  }\n" +
                 "}");
-
-
     }
 
 

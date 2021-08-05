@@ -7,10 +7,10 @@ package com.codrest.teriser_java_connector.testpackage;
 
 public class CubeData {
 
-    public long id;
-    public boolean active;
-    public double prob;
-    public String name;
+    private long id;
+    private boolean active;
+    private double prob;
+    private String name;
 
     @Override
     public String toString() {
@@ -20,5 +20,37 @@ public class CubeData {
                 ", prob=" + prob +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public double getProb() {
+        return prob;
+    }
+
+    public void setProb(double prob) {
+        this.prob = prob;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
