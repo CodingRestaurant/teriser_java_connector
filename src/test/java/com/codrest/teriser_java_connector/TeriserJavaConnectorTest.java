@@ -2,15 +2,17 @@
  * Author : Kasania
  * Filename : com.codrest.teriser.TeriserJavaConnectorTest
  * Desc :
-*/
+ */
 package com.codrest.teriser_java_connector;
 
 
 import com.codrest.teriser_java_connector.core.Teriser;
 import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
+import com.codrest.teriser_java_connector.testpackage.DataPacketBuilder;
 import com.codrest.teriser_java_connector.testpackage.TestBot;
 import com.codrest.teriser_java_connector.testpackage.TestBot2;
+import com.codrest.teriser_java_connector.testpackage.TestBot3;
 import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -20,18 +22,18 @@ public class TeriserJavaConnectorTest {
     Teriser teriser;
 
     @BeforeAll
-    public void Init(){
+    public void Init() {
         messageReceiver = new MessageReceiver();
         teriser = TeriserJavaConnector.Make("ABC", messageReceiver);
-
     }
 
     @Test
     @Order(1)
     @DisplayName("ModuleAddTest")
-    public void ModuleAddTest(){
+    public void ModuleAddTest() {
         teriser.addModule(TestBot.class);
         teriser.addModule(TestBot2.class);
+        teriser.addModule(TestBot3.class);
         teriser.run();
     }
 
@@ -154,6 +156,51 @@ public class TeriserJavaConnectorTest {
                 "        }\n" +
                 "  }\n" +
                 "}\n");
+    }
+
+    @Test
+    @Order(9)
+    @DisplayName("MessageReceiveTest8")
+    public void MessageReceiveTest8() {
+        messageReceiver.onMessageReceived(
+                "{\n" +
+                        "  \"method\": \"blackCube\",\n" +
+                        "  \"data\": {\n" +
+                        "    \"CubeData\": {\n" +
+                        "      \"id\": 1234,\n" +
+                        "      \"active\": true,\n" +
+                        "      \"prob\": 10.1,\n" +
+                        "      \"name\": \"cube\",\n" +
+                        "      \"user\":{\n" +
+                        "        \"id\":123,\n" +
+                        "        \"name\":\"pl1\"\n" +
+                        "      }\n" +
+                        "    },\n" +
+                        "    \"User\":{\n" +
+                        "        \"id\":128,\n" +
+                        "        \"name\":\"hello\"\n" +
+                        "        }\n" +
+                        "  }\n" +
+                        "}"
+        );
+    }
+
+
+    @Test
+    @Order(10)
+    @DisplayName("BuilderTest")
+    public void BuilderTest(){
+        String data = DataPacketBuilder.clientMessageBuild(
+                "DeveloperID is KIM",
+                "BotID is GI",
+                1,
+                "Method Name is Hyun",
+                new String[]{
+                        "JJamBBong",
+                        "Fish"
+                }
+        );
+        System.out.println(data);
     }
 
 }
