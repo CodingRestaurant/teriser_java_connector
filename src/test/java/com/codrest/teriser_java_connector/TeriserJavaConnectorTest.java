@@ -188,8 +188,8 @@ public class TeriserJavaConnectorTest {
 
     @Test
     @Order(10)
-    @DisplayName("BuilderTest")
-    public void BuilderTest(){
+    @DisplayName("ClientMessageBuilderTest")
+    public void ClientMessageBuilderTest() {
         String data = DataPacketBuilder.clientMessageBuild(
                 "DeveloperID is KIM",
                 "BotID is GI",
@@ -203,4 +203,32 @@ public class TeriserJavaConnectorTest {
         System.out.println(data);
     }
 
+    @Test
+    @Order(11)
+    @DisplayName("ServerMessageBuilderSuccessTest")
+    public void ServerMessageBuilderSuccessTest() {
+        String data = DataPacketBuilder.serverMessageBuild(
+                1,
+                "200",
+                new String[]{
+                        "Data1",
+                        "Data2"
+                },
+                null
+        );
+        System.out.println(data);
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("ServerMessageBuilderFailTest")
+    public void ServerMessageBuilderFailTest() {
+        String data = DataPacketBuilder.serverMessageBuild(
+                1,
+                "400",
+                null,
+                "Data is Null"
+        );
+        System.out.println(data);
+    }
 }
