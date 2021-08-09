@@ -1,4 +1,4 @@
-package com.codrest.teriser_java_connector.testpackage;
+package com.codrest.teriser_java_connector.core;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,9 +12,9 @@ public class DataPacketBuilder {
             String botID,
             int requestCode,
             String methodName,
-            JsonObject methodParameter) {
+            JsonObject data) {
 
-        ClientMessage msg = new ClientMessage(developerID, botID, requestCode, methodName, methodParameter);
+        ClientMessage msg = new ClientMessage(developerID, botID, requestCode, methodName, data);
 
         Gson gson = new GsonBuilder().create();
 

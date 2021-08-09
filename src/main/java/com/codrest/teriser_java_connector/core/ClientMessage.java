@@ -1,8 +1,6 @@
-package com.codrest.teriser_java_connector.testpackage;
+package com.codrest.teriser_java_connector.core;
 
 import com.google.gson.JsonObject;
-
-import java.util.Arrays;
 
 public class ClientMessage {
 

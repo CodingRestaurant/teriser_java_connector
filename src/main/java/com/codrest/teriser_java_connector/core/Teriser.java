@@ -87,6 +87,8 @@ public class Teriser {
             Method targetMethod = methods.get(methodName);
             Object[] args = makeArgs(targetMethod, data.getAsJsonObject());
 
+//            DataPacketBuilder.serverMessageBuild()
+
             return (String) targetMethod.invoke(instances.get(methodName),args);
         }catch (InvocationTargetException| IllegalAccessException e){
             e.printStackTrace();

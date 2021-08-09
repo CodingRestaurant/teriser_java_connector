@@ -8,4 +8,10 @@ public class TestBot3 {
     public void blackCube(CubeData cubeData, User user) {
         System.out.println("Cube Failed");
     }
+
+
+    @Api
+    public void helloWorld(String name, String old) {
+        System.out.println("Hello World!!");
+    }
 }

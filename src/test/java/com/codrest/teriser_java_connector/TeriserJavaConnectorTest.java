@@ -13,6 +13,7 @@ import com.codrest.teriser_java_connector.testpackage.DataPacketBuilder;
 import com.codrest.teriser_java_connector.testpackage.TestBot;
 import com.codrest.teriser_java_connector.testpackage.TestBot2;
 import com.codrest.teriser_java_connector.testpackage.TestBot3;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -190,17 +191,19 @@ public class TeriserJavaConnectorTest {
     @Order(10)
     @DisplayName("ClientMessageBuilderTest")
     public void ClientMessageBuilderTest() {
+        JsonObject test = new JsonObject();
+
+        test.addProperty("name", "JJamBBong");
+        test.addProperty("old", "26");
+
         String data = DataPacketBuilder.clientMessageBuild(
                 "DeveloperID is KIM",
                 "BotID is GI",
                 1,
-                "Method Name is Hyun",
-                new String[]{
-                        "JJamBBong",
-                        "Fish"
-                }
+                "helloWorld",
+                test
         );
-        System.out.println(data);
+        messageReceiver.onMessageReceived(data);
     }
 
     @Test
@@ -229,6 +232,5 @@ public class TeriserJavaConnectorTest {
                 null,
                 "Data is Null"
         );
-        System.out.println(data);
     }
 }
