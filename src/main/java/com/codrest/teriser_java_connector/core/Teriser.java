@@ -15,15 +15,18 @@ import com.google.gson.JsonParser;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Teriser {
     private String token;
     private MessageReceiver messageReceiver;
 
     Set<Class<?>> classes = new HashSet<>();
-    Map<String,Method> methods = new HashMap<>();
-    Map<String,Object> instances = new HashMap<>();
+    Map<String, Method> methods = new HashMap<>();
+    Map<String, Object> instances = new HashMap<>();
 
     public Teriser(String token, MessageReceiver messageReceiver) {
         this.token = token;
@@ -34,12 +37,11 @@ public class Teriser {
 
     /**
      * Add Module to Teriser.
-     *
+     * <p>
      * usage : teriser.addModule(Module.class)
      *
      * @param clazz class of Module
-     * @param <K> Type of Module
-     *
+     * @param <K>   Type of Module
      * @see Api
      * @see MessageReceiver
      */
@@ -47,21 +49,21 @@ public class Teriser {
     public <K> void addModule(Class<K> clazz) {
         classes.add(clazz);
         for (Constructor<?> declaredConstructor : clazz.getDeclaredConstructors()) {
-            if(declaredConstructor.getParameterCount() == 0){
+            if (declaredConstructor.getParameterCount() == 0) {
                 try {
 
                     @SuppressWarnings("unchecked")
                     K object = (K) declaredConstructor.newInstance();
 
                     for (Method method : object.getClass().getDeclaredMethods()) {
-                        if(method.isAnnotationPresent(Api.class)){
+                        if (method.isAnnotationPresent(Api.class)) {
                             Api named = method.getAnnotation(Api.class);
                             if (named.name().equals("")) {
                                 methods.put(method.getName(), method);
-                                instances.put(method.getName(),object);
-                            }else{
+                                instances.put(method.getName(), object);
+                            } else {
                                 methods.put(named.name(), method);
-                                instances.put(named.name(),object);
+                                instances.put(named.name(), object);
                             }
                         }
 
@@ -74,36 +76,49 @@ public class Teriser {
 
     }
 
-    public void run(){
+    public void run() {
         methods.forEach((name, method) -> System.out.println(name + ":" + method));
     }
 
     private String handleMessage(String formattedJson) {
-        try{
+        try {
             JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
             String methodName = jsonObject.get("method").getAsString();
             JsonElement data = jsonObject.get("data");
+            JsonElement code = jsonObject.get("requestCode");
 
             Method targetMethod = methods.get(methodName);
             Object[] args = makeArgs(targetMethod, data.getAsJsonObject());
 
-//            DataPacketBuilder.serverMessageBuild()
+            if (code != null) {
+                String msg = DataPacketBuilder.serverMessageBuild(
+                        Integer.parseInt(code.getAsString()),
+                        "200",
+                        new String[]{
+                                (String) targetMethod.invoke(instances.get(methodName), args)
+                        },
+                        "No Error"
+                );
 
-            return (String) targetMethod.invoke(instances.get(methodName),args);
-        }catch (InvocationTargetException| IllegalAccessException e){
+                System.out.println("Server Message "+msg);
+
+                return msg;
+            }
+
+        } catch (InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return "";
     }
 
-    public Object[] makeArgs(Method targetMethod, JsonObject data){
+    public Object[] makeArgs(Method targetMethod, JsonObject data) {
         Object[] args = new Object[targetMethod.getParameterCount()];
 
         int i = 0;
         for (Class<?> parameterType : targetMethod.getParameterTypes()) {
             Gson gson = new Gson();
             for (Map.Entry<String, JsonElement> namedJsonElement : data.entrySet()) {
-                if(parameterType.getName().endsWith(namedJsonElement.getKey())){
+                if (parameterType.getName().endsWith(namedJsonElement.getKey())) {
                     args[i++] = gson.fromJson(namedJsonElement.getValue(), parameterType);
                 }
             }
