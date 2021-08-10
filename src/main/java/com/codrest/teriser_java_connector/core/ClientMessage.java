@@ -2,6 +2,16 @@ package com.codrest.teriser_java_connector.core;
 
 import com.google.gson.JsonObject;
 
+/**
+ * Client to Server message
+ *
+ * This need 5 parameters
+ * developerID -> Identify hwo you are
+ * botID -> Identify project
+ * requestCode -> Identify message
+ * method -> request method name
+ * data -> needed method parameters
+ */
 public class ClientMessage {
 
     private String developerID;

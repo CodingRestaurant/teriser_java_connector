@@ -2,6 +2,15 @@ package com.codrest.teriser_java_connector.core;
 
 import java.util.Arrays;
 
+/**
+ * Server to Client Message
+ *
+ * Need 4 parameters
+ * requestCode -> Identify message (use same requestCode in client message)
+ * statusCode -> result Code (follow http status code)
+ * data -> requested method result
+ * errorMessage -> Error log or null
+ */
 public class ServerMessage {
 
     private int requestCode;
@@ -11,9 +20,9 @@ public class ServerMessage {
 
     /**
      * Server Error Message
-     * @param requestCode
-     * @param statusCode
-     * @param errorMessage
+     * @param requestCode Identify message (use same requestCode in client message)
+     * @param statusCode result Code (follow http status code)
+     * @param errorMessage Error log
      */
     public ServerMessage(int requestCode, String statusCode, String errorMessage) {
         this.requestCode = requestCode;
@@ -24,9 +33,9 @@ public class ServerMessage {
 
     /**
      * Server Success Message
-     * @param requestCode
-     * @param statusCode
-     * @param data
+     * @param requestCode Identify message (use same requestCode in client message)
+     * @param statusCode result Code (follow http status code)
+     * @param data requested method result
      */
     public ServerMessage(int requestCode, String statusCode, String[] data) {
         this.requestCode = requestCode;

@@ -6,7 +6,16 @@ import com.google.gson.JsonObject;
 
 public class DataPacketBuilder {
 
-
+    /**
+     * Generate Client to Server Message
+     *
+     * @param developerID  Identify hwo you are
+     * @param botID Identify project
+     * @param requestCode Identify message
+     * @param methodName request method name
+     * @param data needed method parameters
+     * @return formatted json String
+     */
     public static String clientMessageBuild(
             String developerID,
             String botID,
@@ -21,6 +30,15 @@ public class DataPacketBuilder {
         return gson.toJson(msg);
     }
 
+    /**
+     * Generate Server to Client Message
+     *
+     * @param requestCode Identify message (use same requestCode in client message)
+     * @param statusCode  result Code (follow http status code)
+     * @param data requested method result
+     * @param errorMessage Error log or null
+     * @return formatted json String
+     */
     public static String serverMessageBuild(
             int requestCode,
             String statusCode,
