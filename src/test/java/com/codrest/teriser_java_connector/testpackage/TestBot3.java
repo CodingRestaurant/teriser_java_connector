@@ -11,8 +11,9 @@ public class TestBot3 {
 
 
     @Api
-    public String helloWorld(String name, String old) {
+    public String helloWorld(CubeData cube, User user) {
         System.out.println("TestBot3 API method Called");
+        System.out.println("CubeData "+cube+" User "+user);
         return "Hello World!!";
     }
 }

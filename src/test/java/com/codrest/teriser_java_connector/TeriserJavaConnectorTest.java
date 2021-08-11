@@ -9,11 +9,8 @@ package com.codrest.teriser_java_connector;
 import com.codrest.teriser_java_connector.core.Teriser;
 import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
-import com.codrest.teriser_java_connector.testpackage.DataPacketBuilder;
-import com.codrest.teriser_java_connector.testpackage.TestBot;
-import com.codrest.teriser_java_connector.testpackage.TestBot2;
-import com.codrest.teriser_java_connector.testpackage.TestBot3;
-import com.google.gson.JsonObject;
+import com.codrest.teriser_java_connector.testpackage.*;
+import com.google.gson.*;
 import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -193,8 +190,16 @@ public class TeriserJavaConnectorTest {
     public void ClientMessageBuilderTest() {
         JsonObject test = new JsonObject();
 
-        test.addProperty("name", "JJamBBong");
-        test.addProperty("old", "26");
+        CubeData cubeData = new CubeData();
+        cubeData.setName("cube");
+
+        User user = new User();
+        user.setName("User Name");
+
+        Gson gson = new GsonBuilder().create();
+
+        test.add("CubeData", JsonParser.parseString(gson.toJson(cubeData)));
+        test.add("User", JsonParser.parseString(gson.toJson(user)));
 
         String data = DataPacketBuilder.clientMessageBuild(
                 "DeveloperID is KIM",
@@ -206,31 +211,31 @@ public class TeriserJavaConnectorTest {
         messageReceiver.onMessageReceived(data);
     }
 
-    @Test
-    @Order(11)
-    @DisplayName("ServerMessageBuilderSuccessTest")
-    public void ServerMessageBuilderSuccessTest() {
-        String data = DataPacketBuilder.serverMessageBuild(
-                1,
-                "200",
-                new String[]{
-                        "Data1",
-                        "Data2"
-                },
-                null
-        );
-        System.out.println(data);
-    }
-
-    @Test
-    @Order(12)
-    @DisplayName("ServerMessageBuilderFailTest")
-    public void ServerMessageBuilderFailTest() {
-        String data = DataPacketBuilder.serverMessageBuild(
-                1,
-                "400",
-                null,
-                "Data is Null"
-        );
-    }
+//    @Test
+//    @Order(11)
+//    @DisplayName("ServerMessageBuilderSuccessTest")
+//    public void ServerMessageBuilderSuccessTest() {
+//        String data = DataPacketBuilder.serverMessageBuild(
+//                1,
+//                "200",
+//                new String[]{
+//                        "Data1",
+//                        "Data2"
+//                },
+//                null
+//        );
+//        System.out.println(data);
+//    }
+//
+//    @Test
+//    @Order(12)
+//    @DisplayName("ServerMessageBuilderFailTest")
+//    public void ServerMessageBuilderFailTest() {
+//        String data = DataPacketBuilder.serverMessageBuild(
+//                1,
+//                "400",
+//                null,
+//                "Data is Null"
+//        );
+//    }
 }
