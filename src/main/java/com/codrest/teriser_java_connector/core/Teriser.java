@@ -15,7 +15,10 @@ import com.google.gson.JsonParser;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Teriser {
     private String token;
@@ -81,24 +84,27 @@ public class Teriser {
         JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
         String methodName = jsonObject.get("method").getAsString();
         JsonElement data = jsonObject.get("data");
-        JsonElement code = jsonObject.get("requestCode");
+        JsonElement code = jsonObject.get("messageID");
 
         Method targetMethod = methods.get(methodName);
         Object[] args = makeArgs(targetMethod, data.getAsJsonObject());
 
         if (code != null) {
-//                String msg = DataPacketBuilder.serverMessageBuild(
-//                        Integer.parseInt(code.getAsString()),
-//                        "200",
-//                        new String[]{
-//                                (String) targetMethod.invoke(instances.get(methodName), args)
-//                        },
-//                        "No Error"
-//                );
+            DataPacketBuilder builder = new DataPacketBuilder(jsonObject.get("developerID").getAsString(), jsonObject.get("projectID").getAsString(), jsonObject.get("messageID").getAsInt());
 
-            System.out.println("Server Message "+"msg");
+            try {
+                builder.setData(
+                        new String[]{(String) targetMethod.invoke(instances.get(methodName), args)}
+                );
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
 
-            return "msg";
+            String msg = builder.buildServerOkMessage();
+
+            System.out.println("Server Message " + msg);
+
+            return msg;
         }
 
         return "";
