@@ -22,7 +22,7 @@ public class UserClient {
     private ExecutorService executors;
 
     public UserClient() {
-        executors = Executors.newCachedThreadPool();
+        executors = Executors.newFixedThreadPool(2);
         executors.execute(this::connectServer);
     }
 
@@ -63,6 +63,8 @@ public class UserClient {
                 buffer.putInt(data.length);
                 buffer.put(data);
 
+                buffer.flip();
+                System.out.println("Client send data");
                 client.write(buffer);
             } catch (IOException e) {
                 e.printStackTrace();

@@ -18,6 +18,7 @@ public class UserListener implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("User Listener Start");
         while (socket.isConnected()) {
             ByteBuffer buffer = ByteBuffer.allocate(4);
             try {
@@ -27,6 +28,8 @@ public class UserListener implements Runnable {
                 }
                 buffer.flip();
                 int size = buffer.getInt();
+                System.out.println("Data size "+size);
+
 
                 ByteBuffer dataBuffer = ByteBuffer.allocate(size);
 
