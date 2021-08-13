@@ -78,33 +78,29 @@ public class Teriser {
     }
 
     private String handleMessage(String formattedJson) {
-        try {
-            JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
-            String methodName = jsonObject.get("method").getAsString();
-            JsonElement data = jsonObject.get("data");
-            JsonElement code = jsonObject.get("requestCode");
+        JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
+        String methodName = jsonObject.get("method").getAsString();
+        JsonElement data = jsonObject.get("data");
+        JsonElement code = jsonObject.get("requestCode");
 
-            Method targetMethod = methods.get(methodName);
-            Object[] args = makeArgs(targetMethod, data.getAsJsonObject());
+        Method targetMethod = methods.get(methodName);
+        Object[] args = makeArgs(targetMethod, data.getAsJsonObject());
 
-            if (code != null) {
-                String msg = DataPacketBuilder.serverMessageBuild(
-                        Integer.parseInt(code.getAsString()),
-                        "200",
-                        new String[]{
-                                (String) targetMethod.invoke(instances.get(methodName), args)
-                        },
-                        "No Error"
-                );
+        if (code != null) {
+//                String msg = DataPacketBuilder.serverMessageBuild(
+//                        Integer.parseInt(code.getAsString()),
+//                        "200",
+//                        new String[]{
+//                                (String) targetMethod.invoke(instances.get(methodName), args)
+//                        },
+//                        "No Error"
+//                );
 
-                System.out.println("Server Message "+msg);
+            System.out.println("Server Message "+"msg");
 
-                return msg;
-            }
-
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
+            return "msg";
         }
+
         return "";
     }
 

@@ -18,6 +18,13 @@ public class ServerMessage {
     private String[] data;
     private String errorMessage;
 
+    public ServerMessage(int messageID, String responseCode, String[] data, String errorMessage) {
+        this.messageID = messageID;
+        this.responseCode = responseCode;
+        this.data = data;
+        this.errorMessage = errorMessage;
+    }
+
     /**
      * Server Error Message
      * @param messageID Identify message (use same requestCode in client message)
