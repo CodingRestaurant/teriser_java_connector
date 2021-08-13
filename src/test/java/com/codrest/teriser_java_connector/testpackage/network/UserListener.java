@@ -4,8 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
@@ -19,18 +18,30 @@ public class UserListener implements Runnable {
 
     @Override
     public void run() {
-//        try {
-//            while (socket.isConnected()) {
-//                InputStream inputStream = socket.re();
-//                byte[] buffer = new byte[195];
-//                inputStream.read(buffer);
-//                String dataString = new String(buffer, StandardCharsets.UTF_8);
-//                System.out.println("data "+dataString);
-//                JsonElement json = JsonParser.parseString(dataString);
-//                System.out.println("Listen "+json);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        while (socket.isConnected()) {
+            ByteBuffer buffer = ByteBuffer.allocate(4);
+            try {
+                int rect = socket.read(buffer);
+                if (rect <= 1){
+                    return;
+                }
+                buffer.flip();
+                int size = buffer.getInt();
+
+                ByteBuffer dataBuffer = ByteBuffer.allocate(size);
+
+                while (dataBuffer.hasRemaining()) {
+                    socket.read(dataBuffer);
+                }
+
+                String data = new String(dataBuffer.array(), StandardCharsets.UTF_8);
+                System.out.println("Data "+data);
+
+                JsonElement json = JsonParser.parseString(data);
+                System.out.println("Json "+json);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
