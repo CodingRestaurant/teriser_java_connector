@@ -213,31 +213,13 @@ public class TeriserJavaConnectorTest {
         messageReceiver.onMessageReceived(data);
     }
 
-//    @Test
-//    @Order(11)
-//    @DisplayName("ServerMessageBuilderSuccessTest")
-//    public void ServerMessageBuilderSuccessTest() {
-//        String data = DataPacketBuilder.serverMessageBuild(
-//                1,
-//                "200",
-//                new String[]{
-//                        "Data1",
-//                        "Data2"
-//                },
-//                null
-//        );
-//        System.out.println(data);
-//    }
-//
-//    @Test
-//    @Order(12)
-//    @DisplayName("ServerMessageBuilderFailTest")
-//    public void ServerMessageBuilderFailTest() {
-//        String data = DataPacketBuilder.serverMessageBuild(
-//                1,
-//                "400",
-//                null,
-//                "Data is Null"
-//        );
-//    }
+    @Test
+    @Order(11)
+    @DisplayName("TestServer")
+    public void TestServer() {
+        TeriserServer server = new TeriserServer();
+        server.startServer();
+
+
+    }
 }
