@@ -10,6 +10,8 @@ import com.codrest.teriser_java_connector.core.Teriser;
 import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.testpackage.*;
+import com.codrest.teriser_java_connector.testpackage.network.TeriserServer;
+import com.codrest.teriser_java_connector.testpackage.network.UserClient;
 import com.google.gson.*;
 import org.junit.jupiter.api.*;
 
@@ -220,6 +222,7 @@ public class TeriserJavaConnectorTest {
         TeriserServer server = new TeriserServer();
         server.startServer();
 
-
+        UserClient client = new UserClient();
+        client.sendData();
     }
 }
