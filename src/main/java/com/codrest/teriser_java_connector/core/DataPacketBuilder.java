@@ -15,10 +15,13 @@ public class DataPacketBuilder {
     private String[] data;
     private String errorMessage;
 
+    private Gson gson;
+
     public DataPacketBuilder(String developerID, String projectID, int messageID) {
         this.developerID = developerID;
         this.projectID = projectID;
         this.messageID = messageID;
+        gson = new GsonBuilder().create();
     }
 
     public DataPacketBuilder setMethodName(String name) {
@@ -58,9 +61,6 @@ public class DataPacketBuilder {
      */
     public String buildClientMessage() {
         ClientMessage msg = new ClientMessage(developerID, projectID, messageID, methodName, methodParameter);
-
-        Gson gson = new GsonBuilder().create();
-
         return gson.toJson(msg);
     }
 
@@ -75,9 +75,12 @@ public class DataPacketBuilder {
      * @return formatted json String
      */
     public String buildServerMessage() {
-        Gson gson = new GsonBuilder().create();
-        ServerMessage serverMessage;
-        serverMessage = new ServerMessage(messageID, responseCode, data, errorMessage);
+        ServerMessage serverMessage = new ServerMessage(messageID, responseCode, data, errorMessage);
+        return gson.toJson(serverMessage);
+    }
+
+    public String buildServerOkMessage(){
+        ServerMessage serverMessage = new ServerMessage(messageID, ResponseCode.OK, data, null);
         return gson.toJson(serverMessage);
     }
 }
