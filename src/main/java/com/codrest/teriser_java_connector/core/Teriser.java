@@ -80,6 +80,10 @@ public class Teriser {
         methods.forEach((name, method) -> System.out.println(name + ":" + method));
     }
 
+    public String request(String formattedJson) {
+        return messageReceiver.onMessageReceived(formattedJson);
+    }
+
     private String handleMessage(String formattedJson) {
         JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
         String methodName = jsonObject.get("method").getAsString();
