@@ -7,8 +7,8 @@ import com.google.gson.JsonObject;
  *
  * This need 5 parameters
  * developerID -> Identify hwo you are
- * botID -> Identify project
- * requestCode -> Identify message
+ * projectID -> Identify project
+ * messageID -> Identify message
  * method -> request method name
  * data -> needed method parameters
  */
@@ -32,8 +32,8 @@ public class ClientMessage {
     public String toString() {
         return "ClientMessage{" +
                 "developerID='" + developerID + '\'' +
-                ", botID='" + projectID + '\'' +
-                ", requestCode=" + messageID +
+                ", projectID='" + projectID + '\'' +
+                ", messageID=" + messageID +
                 ", method='" + method + '\'' +
                 ", data=" + data +
                 '}';
