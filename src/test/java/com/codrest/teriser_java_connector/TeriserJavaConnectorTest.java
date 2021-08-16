@@ -188,34 +188,34 @@ public class TeriserJavaConnectorTest {
 //    }
 //
 //
-//    @Test
-//    @Order(10)
-//    @DisplayName("ClientMessageBuilderTest")
-//    public void ClientMessageBuilderTest() {
-//        JsonObject test = new JsonObject();
-//
-//        CubeData cubeData = new CubeData();
-//        cubeData.setName("cube");
-//
-//        User user = new User();
-//        user.setName("User Name");
-//
-//        Gson gson = new GsonBuilder().create();
-//
-//        test.add("CubeData", JsonParser.parseString(gson.toJson(cubeData)));
-//        test.add("User", JsonParser.parseString(gson.toJson(user)));
-//
-//        DataPacketBuilder builder = new DataPacketBuilder("developer ID", "Project ID", 1);
-//
-//        String data = builder
-//                .setMethodName("helloWorld")
-//                .setMethodParameter(test)
-//                .buildClientMessage();
-//
-//        System.out.println("Client message "+data);
-//
-//        messageReceiver.onMessageReceived(data);
-//    }
+    @Test
+    @Order(10)
+    @DisplayName("ClientMessageBuilderTest")
+    public void ClientMessageBuilderTest() {
+        JsonObject test = new JsonObject();
+
+        CubeData cubeData = new CubeData();
+        cubeData.setName("cube");
+
+        User user = new User();
+        user.setName("User Name");
+
+        Gson gson = new GsonBuilder().create();
+
+        test.add("CubeData", JsonParser.parseString(gson.toJson(cubeData)));
+        test.add("User", JsonParser.parseString(gson.toJson(user)));
+
+        DataPacketBuilder builder = new DataPacketBuilder("developer ID", "Project ID", 1);
+
+        String data = builder
+                .setMethodName("helloWorld")
+                .setMethodParameter(test)
+                .buildClientMessage();
+
+        System.out.println("Client message "+data);
+
+        messageReceiver.onMessageReceived(data);
+    }
 
     @Test
     @Order(1)
