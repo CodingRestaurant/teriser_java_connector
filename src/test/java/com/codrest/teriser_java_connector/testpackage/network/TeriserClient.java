@@ -6,8 +6,14 @@ import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.testpackage.TestBot;
 import com.codrest.teriser_java_connector.testpackage.TestBot2;
 import com.codrest.teriser_java_connector.testpackage.TestBot3;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -26,6 +32,26 @@ public class TeriserClient {
         clientExecutors = Executors.newCachedThreadPool();
         initTeriser();
     }
+
+
+    public void test() {
+        try {
+            HttpServer server = HttpServer.create(new InetSocketAddress(10101), 0);
+            server.createContext("/", new HttpHandler() {
+                @Override
+                public void handle(HttpExchange exchange) {
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
+                    System.out.println("Body " +exchange.getRequestBody());
+                    System.out.println("Query "+exchange.getRequestURI().getQuery());
+                }
+            });
+
+            server.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void initTeriser() {
         teriser = TeriserJavaConnector.Make("ABC", new MessageReceiver());
