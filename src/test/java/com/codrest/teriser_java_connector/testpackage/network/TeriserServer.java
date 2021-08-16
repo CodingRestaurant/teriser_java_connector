@@ -1,16 +1,18 @@
 package com.codrest.teriser_java_connector.testpackage.network;
 
+import com.codrest.teriser_java_connector.core.DataPacketBuilder;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
@@ -77,31 +79,36 @@ public class TeriserServer {
             URL url = new URL(address);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("method", method);
-            connection.setRequestProperty("parameters", parameters.toString());
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
 
-            connection.connect();
 
-            int requestCode = connection.getResponseCode();
+            connection.setDoOutput(true);
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
 
-            InputStream inputStream;
+            DataPacketBuilder builder = new DataPacketBuilder("developerID", "projectID", 1);
 
-            if (requestCode == HttpsURLConnection.HTTP_OK) {
-                inputStream = connection.getInputStream();
-            }else{
-                inputStream = connection.getErrorStream();
+            builder.setMethodName(method);
+            builder.setMethodParameter(parameters);
+            String msg = builder.buildClientMessage();
+
+            bw.write(msg);
+            bw.flush();
+            bw.close();
+
+            int code = connection.getResponseCode();
+
+            if (code == HttpsURLConnection.HTTP_OK) {
+                try(BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))){
+                    StringBuilder response = new StringBuilder();
+                    String responseLine = null;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                    }
+                }
             }
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line;
-            StringBuilder builder = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
-
-            reader.close();
-
+            //TODO send result to client
         } catch (IOException e) {
             e.printStackTrace();
         }
