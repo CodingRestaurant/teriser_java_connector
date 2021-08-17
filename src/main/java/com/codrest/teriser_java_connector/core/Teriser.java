@@ -96,17 +96,21 @@ public class Teriser {
 //        DataPacketBuilder builder = new DataPacketBuilder(jsonObject.get("developerID").getAsString(), jsonObject.get("projectID").getAsString(), jsonObject.get("messageID").getAsInt());
         DataPacketBuilder builder = new DataPacketBuilder();
 
+        String msg = "";
+
         try {
             builder.setData(
                     new String[]{(String) targetMethod.invoke(instances.get(methodName), args)}
             );
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            builder.setErrorMessage("No Parameter");
+            msg = builder.buildServerMessage();
+            return msg;
+        } catch (InvocationTargetException e1){
+            e1.printStackTrace();
         }
 
-        String msg = builder.buildServerOkMessage();
-
-        System.out.println("Server Message " + msg);
+        msg = builder.buildServerOkMessage();
 
         return msg;
     }
