@@ -87,31 +87,28 @@ public class Teriser {
     private String handleMessage(String formattedJson) {
         JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
         String methodName = jsonObject.get("method").getAsString();
-        JsonElement data = jsonObject.get("data");
-        JsonElement code = jsonObject.get("messageID");
+        JsonElement parameters = jsonObject.get("parameters");
+//        JsonElement code = jsonObject.get("messageID");
 
         Method targetMethod = methods.get(methodName);
-        Object[] args = makeArgs(targetMethod, data.getAsJsonObject());
+        Object[] args = makeArgs(targetMethod, parameters.getAsJsonObject());
 
-        if (code != null) {
-            DataPacketBuilder builder = new DataPacketBuilder(jsonObject.get("developerID").getAsString(), jsonObject.get("projectID").getAsString(), jsonObject.get("messageID").getAsInt());
+//        DataPacketBuilder builder = new DataPacketBuilder(jsonObject.get("developerID").getAsString(), jsonObject.get("projectID").getAsString(), jsonObject.get("messageID").getAsInt());
+        DataPacketBuilder builder = new DataPacketBuilder();
 
-            try {
-                builder.setData(
-                        new String[]{(String) targetMethod.invoke(instances.get(methodName), args)}
-                );
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-
-            String msg = builder.buildServerOkMessage();
-
-            System.out.println("Server Message " + msg);
-
-            return msg;
+        try {
+            builder.setData(
+                    new String[]{(String) targetMethod.invoke(instances.get(methodName), args)}
+            );
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
         }
 
-        return "";
+        String msg = builder.buildServerOkMessage();
+
+        System.out.println("Server Message " + msg);
+
+        return msg;
     }
 
     public Object[] makeArgs(Method targetMethod, JsonObject data) {

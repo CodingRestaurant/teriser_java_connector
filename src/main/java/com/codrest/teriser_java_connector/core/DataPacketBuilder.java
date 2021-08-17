@@ -6,9 +6,9 @@ import com.google.gson.JsonObject;
 
 public class DataPacketBuilder {
 
-    private final String developerID;
-    private final String projectID;
-    private final int messageID;
+    private String developerID;
+    private String projectID;
+    private int messageID;
     private String methodName;
     private JsonObject methodParameter;
     private String responseCode;
@@ -21,6 +21,10 @@ public class DataPacketBuilder {
         this.developerID = developerID;
         this.projectID = projectID;
         this.messageID = messageID;
+        gson = new GsonBuilder().create();
+    }
+
+    public DataPacketBuilder() {
         gson = new GsonBuilder().create();
     }
 
