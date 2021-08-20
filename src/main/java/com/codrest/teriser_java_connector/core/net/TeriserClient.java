@@ -1,6 +1,8 @@
 package com.codrest.teriser_java_connector.core.net;
 
 import com.codrest.teriser_java_connector.core.Teriser;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -52,9 +54,12 @@ public class TeriserClient {
                     headers.add("Content-Type", "application/json");
                     headers.add("Content-Length", String.valueOf(result));
 
+                    JsonObject msg = JsonParser.parseString(result).getAsJsonObject();
+                    int code = msg.get("responseCode").getAsInt();
+
                     OutputStream stream = exchange.getResponseBody();
                     try {
-                        exchange.sendResponseHeaders(200, result.length());
+                        exchange.sendResponseHeaders(code, result.length());
                         stream.write(result.getBytes(StandardCharsets.UTF_8));
                         stream.flush();
                     } catch (IOException e) {
