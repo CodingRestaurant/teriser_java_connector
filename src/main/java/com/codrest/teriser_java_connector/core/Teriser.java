@@ -93,13 +93,12 @@ public class Teriser {
         JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
         String methodName = jsonObject.get("method").getAsString();
         JsonElement parameters = jsonObject.get("parameters");
-//        JsonElement code = jsonObject.get("messageID");
+        int messageID = jsonObject.get("messageID").getAsInt();
 
         Method targetMethod = methods.get(methodName);
         Object[] args = makeArgs(targetMethod, parameters.getAsJsonObject());
 
-//        DataPacketBuilder builder = new DataPacketBuilder(jsonObject.get("developerID").getAsString(), jsonObject.get("projectID").getAsString(), jsonObject.get("messageID").getAsInt());
-        DataPacketBuilder builder = new DataPacketBuilder();
+        DataPacketBuilder builder = new DataPacketBuilder(messageID);
 
         String msg = "";
 
