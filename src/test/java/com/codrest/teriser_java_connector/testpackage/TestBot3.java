@@ -16,4 +16,12 @@ public class TestBot3 {
         System.out.println("CubeData "+cube+" User "+user);
         return "Hello World!!";
     }
+
+    @Api
+    public String testMethod(String string1, String string2, int int3){
+        System.out.println("testMethod string1 "+string1);
+        System.out.println("testMethod string2 "+string2);
+        System.out.println("testMethod int "+int3);
+        return "TestMethod";
+    }
 }

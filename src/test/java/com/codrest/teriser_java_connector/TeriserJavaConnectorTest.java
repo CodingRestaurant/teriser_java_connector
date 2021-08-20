@@ -6,12 +6,13 @@
 package com.codrest.teriser_java_connector;
 
 
+import com.codrest.teriser_java_connector.core.DataPacketBuilder;
 import com.codrest.teriser_java_connector.core.Teriser;
 import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
-import com.codrest.teriser_java_connector.testpackage.*;
-import com.codrest.teriser_java_connector.testpackage.network.TeriserServer;
-import com.codrest.teriser_java_connector.testpackage.network.UserClient;
+import com.codrest.teriser_java_connector.testpackage.TestBot;
+import com.codrest.teriser_java_connector.testpackage.TestBot2;
+import com.codrest.teriser_java_connector.testpackage.TestBot3;
 import com.google.gson.*;
 import org.junit.jupiter.api.*;
 
@@ -25,19 +26,17 @@ public class TeriserJavaConnectorTest {
     public void Init() {
         messageReceiver = new MessageReceiver();
         teriser = TeriserJavaConnector.Make("ABC", messageReceiver);
-        TeriserServer server = new TeriserServer();
-        server.startServer();
     }
 
-//    @Test
-//    @Order(1)
-//    @DisplayName("ModuleAddTest")
-//    public void ModuleAddTest() {
-//        teriser.addModule(TestBot.class);
-//        teriser.addModule(TestBot2.class);
-//        teriser.addModule(TestBot3.class);
-//        teriser.run();
-//    }
+    @Test
+    @Order(1)
+    @DisplayName("ModuleAddTest")
+    public void ModuleAddTest() {
+        teriser.addModule(TestBot.class);
+        teriser.addModule(TestBot2.class);
+        teriser.addModule(TestBot3.class);
+        teriser.run();
+    }
 //
 //    @Test
 //    @Order(2)
@@ -189,26 +188,32 @@ public class TeriserJavaConnectorTest {
 //
 //
     @Test
-    @Order(10)
+    @Order(2)
     @DisplayName("ClientMessageBuilderTest")
     public void ClientMessageBuilderTest() {
         JsonObject test = new JsonObject();
 
-        CubeData cubeData = new CubeData();
-        cubeData.setName("cube");
+        JsonArray array = new JsonArray();
 
-        User user = new User();
-        user.setName("User Name");
+        JsonObject parameter1 = new JsonObject();
+        parameter1.addProperty("String", "string1");
 
-        Gson gson = new GsonBuilder().create();
+        JsonObject parameter2 = new JsonObject();
+        parameter2.addProperty("String", "string2");
 
-        test.add("CubeData", JsonParser.parseString(gson.toJson(cubeData)));
-        test.add("User", JsonParser.parseString(gson.toJson(user)));
+        JsonObject parameter3 = new JsonObject();
+        parameter3.addProperty("int", "22222");
 
-        DataPacketBuilder builder = new DataPacketBuilder("developer ID", "Project ID", 1);
+        array.add(parameter1);
+        array.add(parameter2);
+        array.add(parameter3);
+
+        test.add("data", array);
+
+        DataPacketBuilder builder = new com.codrest.teriser_java_connector.core.DataPacketBuilder(1);
 
         String data = builder
-                .setMethodName("helloWorld")
+                .setMethodName("testMethod")
                 .setMethodParameter(test)
                 .buildClientMessage();
 
@@ -217,11 +222,4 @@ public class TeriserJavaConnectorTest {
         messageReceiver.onMessageReceived(data);
     }
 
-    @Test
-    @Order(1)
-    @DisplayName("TestServer")
-    public void TestServer() {
-        UserClient client = new UserClient();
-        client.sendData();
-    }
 }

@@ -8,18 +8,12 @@ package com.codrest.teriser_java_connector.core;
 import com.codrest.teriser_java_connector.annotation.Api;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.core.net.TeriserClient;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Teriser {
     private String token;
@@ -122,14 +116,26 @@ public class Teriser {
     public Object[] makeArgs(Method targetMethod, JsonObject data) {
         Object[] args = new Object[targetMethod.getParameterCount()];
 
+        JsonArray parameterArray = data.get("data").getAsJsonArray();
+
         int i = 0;
         for (Class<?> parameterType : targetMethod.getParameterTypes()) {
             Gson gson = new Gson();
-            for (Map.Entry<String, JsonElement> namedJsonElement : data.entrySet()) {
-                if (parameterType.getName().endsWith(namedJsonElement.getKey())) {
-                    args[i++] = gson.fromJson(namedJsonElement.getValue(), parameterType);
+            for (JsonElement parameter : parameterArray) {
+                JsonObject json = parameter.getAsJsonObject();
+                String type = json.keySet().iterator().next();
+                if (parameterType.getName().endsWith(type)){
+                    args[i++] = gson.fromJson(json.get(type), parameterType);
+                    parameterArray.remove(json);
+                    break;
                 }
             }
+
+//            for (Map.Entry<String, JsonElement> namedJsonElement : data.entrySet()) {
+//                if (parameterType.getName().endsWith(namedJsonElement.getKey())) {
+//                    args[i++] = gson.fromJson(namedJsonElement.getValue(), parameterType);
+//                }
+//            }
 
         }
         return args;
