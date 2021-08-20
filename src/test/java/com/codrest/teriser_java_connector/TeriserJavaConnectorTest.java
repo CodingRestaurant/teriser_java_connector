@@ -222,4 +222,38 @@ public class TeriserJavaConnectorTest {
         messageReceiver.onMessageReceived(data);
     }
 
+    @Test
+    @Order(3)
+    @DisplayName("ParameterTest_StringIntDouble")
+    public void ParameterTest_StringIntDouble() {
+        JsonObject test = new JsonObject();
+
+        JsonArray array = new JsonArray();
+
+        JsonObject parameter1 = new JsonObject();
+        parameter1.addProperty("String", "string1");
+
+        JsonObject parameter2 = new JsonObject();
+        parameter2.addProperty("int", "123456789");
+
+        JsonObject parameter3 = new JsonObject();
+        parameter3.addProperty("double", "14.123");
+
+        array.add(parameter1);
+        array.add(parameter2);
+        array.add(parameter3);
+
+        test.add("data", array);
+
+        DataPacketBuilder builder = new com.codrest.teriser_java_connector.core.DataPacketBuilder(1);
+
+        String data = builder
+                .setMethodName("testMethod2")
+                .setMethodParameter(test)
+                .buildClientMessage();
+
+        System.out.println("Client message "+data);
+
+        messageReceiver.onMessageReceived(data);
+    }
 }

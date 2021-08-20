@@ -24,4 +24,12 @@ public class TestBot3 {
         System.out.println("testMethod int "+int3);
         return "TestMethod";
     }
+
+    @Api
+    public String testMethod2(String string1, int int2, double double3){
+        System.out.println("testMethod2 string1 "+string1);
+        System.out.println("testMethod2 int2 "+int2);
+        System.out.println("testMethod2 double "+double3);
+        return "TestMethod2";
+    }
 }
