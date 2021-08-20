@@ -16,12 +16,12 @@ public class ClientMessage {
 
     private int messageID;
     private String method;
-    private JsonObject data;
+    private JsonObject parameters;
 
-    public ClientMessage(int messageID, String methodName, JsonObject data) {
+    public ClientMessage(int messageID, String methodName, JsonObject parameters) {
         this.messageID = messageID;
         this.method = methodName;
-        this.data = data;
+        this.parameters = parameters;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ClientMessage {
         return "ClientMessage{" +
                 ", messageID=" + messageID +
                 ", method='" + method + '\'' +
-                ", data=" + data +
+                ", parameters=" + parameters +
                 '}';
     }
 }
