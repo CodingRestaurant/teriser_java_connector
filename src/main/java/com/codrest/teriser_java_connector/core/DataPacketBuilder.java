@@ -64,7 +64,7 @@ public class DataPacketBuilder {
      * @return formatted json String
      */
     public String buildClientMessage() {
-        ClientMessage msg = new ClientMessage(developerID, projectID, messageID, methodName, methodParameter);
+        ClientMessage msg = new ClientMessage(messageID, methodName, methodParameter);
         return gson.toJson(msg);
     }
 

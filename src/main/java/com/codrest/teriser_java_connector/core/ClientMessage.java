@@ -14,15 +14,11 @@ import com.google.gson.JsonObject;
  */
 public class ClientMessage {
 
-    private String developerID;
-    private String projectID;
     private int messageID;
     private String method;
     private JsonObject data;
 
-    public ClientMessage(String developerID, String projectID, int messageID, String methodName, JsonObject data) {
-        this.developerID = developerID;
-        this.projectID = projectID;
+    public ClientMessage(int messageID, String methodName, JsonObject data) {
         this.messageID = messageID;
         this.method = methodName;
         this.data = data;
@@ -31,8 +27,6 @@ public class ClientMessage {
     @Override
     public String toString() {
         return "ClientMessage{" +
-                "developerID='" + developerID + '\'' +
-                ", projectID='" + projectID + '\'' +
                 ", messageID=" + messageID +
                 ", method='" + method + '\'' +
                 ", data=" + data +
