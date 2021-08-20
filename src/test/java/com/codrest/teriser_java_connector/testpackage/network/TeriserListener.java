@@ -50,11 +50,9 @@ public class TeriserListener implements Runnable{
 
                 String result = teriser.request(data);
 
-                String developerID = json.get("developerID").getAsString();
-                String projectID = json.get("projectID").getAsString();
                 int messageID = json.get("messageID").getAsInt();
 
-                DataPacketBuilder builder = new DataPacketBuilder(developerID, projectID, messageID);
+                DataPacketBuilder builder = new DataPacketBuilder(messageID);
                 String resultMsg = builder.setData(new String[]{result})
                         .buildServerOkMessage();
 

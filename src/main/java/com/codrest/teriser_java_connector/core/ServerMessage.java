@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 /**
  * Server to Client Message
- *
+ * <p>
  * Need 4 parameters
  * messageID -> Identify message (use same requestCode in client message)
  * responseCode -> result Code (follow http status code)
@@ -13,12 +13,14 @@ import java.util.Arrays;
  */
 public class ServerMessage {
 
+    private String token;
     private int messageID;
     private String responseCode;
     private String[] data;
     private String errorMessage;
 
-    public ServerMessage(int messageID, String responseCode, String[] data, String errorMessage) {
+    public ServerMessage(String token, int messageID, String responseCode, String[] data, String errorMessage) {
+        this.token = token;
         this.messageID = messageID;
         this.responseCode = responseCode;
         this.data = data;
@@ -27,11 +29,13 @@ public class ServerMessage {
 
     /**
      * Server Error Message
-     * @param messageID Identify message (use same requestCode in client message)
+     *
+     * @param messageID    Identify message (use same requestCode in client message)
      * @param responseCode result Code (follow http status code)
      * @param errorMessage Error log
      */
-    public ServerMessage(int messageID, String responseCode, String errorMessage) {
+    public ServerMessage(String token, int messageID, String responseCode, String errorMessage) {
+        this.token = token;
         this.messageID = messageID;
         this.responseCode = responseCode;
         this.errorMessage = errorMessage;
@@ -40,11 +44,13 @@ public class ServerMessage {
 
     /**
      * Server Success Message
-     * @param messageID Identify message (use same requestCode in client message)
+     *
+     * @param messageID    Identify message (use same requestCode in client message)
      * @param responseCode result Code (follow http status code)
-     * @param data requested method result
+     * @param data         requested method result
      */
-    public ServerMessage(int messageID, String responseCode, String[] data) {
+    public ServerMessage(String token, int messageID, String responseCode, String[] data) {
+        this.token = token;
         this.messageID = messageID;
         this.responseCode = responseCode;
         this.data = data;
@@ -54,6 +60,7 @@ public class ServerMessage {
     @Override
     public String toString() {
         return "ServerMessage{" +
+                "token=" + token +
                 "messageID=" + messageID +
                 ", responseCode='" + responseCode + '\'' +
                 ", data=" + Arrays.toString(data) +

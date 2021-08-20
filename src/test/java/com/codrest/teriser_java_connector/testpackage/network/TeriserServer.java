@@ -86,7 +86,7 @@ public class TeriserServer {
             connection.setDoOutput(true);
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
 
-            DataPacketBuilder builder = new DataPacketBuilder("developerID", "projectID", 1);
+            DataPacketBuilder builder = new DataPacketBuilder(1);
 
             builder.setMethodName(method);
             builder.setMethodParameter(parameters);

@@ -6,8 +6,6 @@ import com.google.gson.JsonObject;
 
 public class DataPacketBuilder {
 
-    private String developerID;
-    private String projectID;
     private int messageID;
     private String methodName;
     private JsonObject methodParameter;
@@ -17,15 +15,18 @@ public class DataPacketBuilder {
 
     private Gson gson;
 
-    public DataPacketBuilder(String developerID, String projectID, int messageID) {
-        this.developerID = developerID;
-        this.projectID = projectID;
+    public DataPacketBuilder(int messageID) {
         this.messageID = messageID;
         gson = new GsonBuilder().create();
     }
 
     public DataPacketBuilder() {
         gson = new GsonBuilder().create();
+    }
+
+    public DataPacketBuilder setMessageID(int messageID) {
+        this.messageID = messageID;
+        return this;
     }
 
     public DataPacketBuilder setMethodName(String name) {
@@ -79,12 +80,12 @@ public class DataPacketBuilder {
      * @return formatted json String
      */
     public String buildServerMessage() {
-        ServerMessage serverMessage = new ServerMessage(messageID, responseCode, data, errorMessage);
+        ServerMessage serverMessage = new ServerMessage("tempToken", messageID, responseCode, data, errorMessage);
         return gson.toJson(serverMessage);
     }
 
     public String buildServerOkMessage(){
-        ServerMessage serverMessage = new ServerMessage(messageID, ResponseCode.OK, data, null);
+        ServerMessage serverMessage = new ServerMessage("tempToken",messageID, ResponseCode.OK, data, null);
         return gson.toJson(serverMessage);
     }
 }
