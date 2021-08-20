@@ -102,13 +102,13 @@ public class Teriser {
             );
         } catch (IllegalAccessException e) {
             builder.setErrorMessage("No Parameter");
-            msg = builder.buildServerMessage();
+            msg = builder.buildServerMessage("TempToken");
             return msg;
         } catch (InvocationTargetException e1) {
             e1.printStackTrace();
         }
 
-        msg = builder.buildServerOkMessage();
+        msg = builder.buildServerOkMessage("TempToken");
 
         return msg;
     }
