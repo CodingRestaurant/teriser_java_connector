@@ -30,6 +30,9 @@ public class TeriserClient {
             server.createContext("/", new HttpHandler() {
                 @Override
                 public void handle(HttpExchange exchange) {
+                    if (!exchange.getRequestMethod().equals("GET")){
+                        return;
+                    }
                     BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
 
                     StringBuilder builder = new StringBuilder();
