@@ -24,6 +24,7 @@ import java.util.Set;
 public class Teriser {
     private String token;
     private MessageReceiver messageReceiver;
+    private TeriserClient teriserClient;
 
     Set<Class<?>> classes = new HashSet<>();
     Map<String, Method> methods = new HashMap<>();
@@ -33,6 +34,7 @@ public class Teriser {
         this.token = token;
         this.messageReceiver = messageReceiver;
         messageReceiver.setMessageExecutor(this::handleMessage);
+        teriserClient = new TeriserClient(this::request);
     }
 
 
@@ -78,7 +80,6 @@ public class Teriser {
     }
 
     public void run() {
-        TeriserClient teriserClient = new TeriserClient(this::request);
         teriserClient.startClient();
         System.out.println("Teriser client is Running");
         methods.forEach((name, method) -> System.out.println(name + ":" + method));
@@ -110,7 +111,7 @@ public class Teriser {
             builder.setErrorMessage("No Parameter");
             msg = builder.buildServerMessage();
             return msg;
-        } catch (InvocationTargetException e1){
+        } catch (InvocationTargetException e1) {
             e1.printStackTrace();
         }
 
