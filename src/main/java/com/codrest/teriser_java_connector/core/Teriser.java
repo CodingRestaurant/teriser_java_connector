@@ -7,6 +7,7 @@ package com.codrest.teriser_java_connector.core;
 
 import com.codrest.teriser_java_connector.annotation.Api;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
+import com.codrest.teriser_java_connector.core.net.TeriserClient;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -77,6 +78,9 @@ public class Teriser {
     }
 
     public void run() {
+        TeriserClient teriserClient = new TeriserClient(this::request);
+        teriserClient.startClient();
+        System.out.println("Teriser client is Running");
         methods.forEach((name, method) -> System.out.println(name + ":" + method));
     }
 
