@@ -38,6 +38,12 @@ public class TeriserClient {
     private void initClient() {
         try {
             server = HttpServer.create(new InetSocketAddress(10101), 0);
+//            server.createContext("/", new HttpHandler() { //TODO Response Code 받은 뒤 어떻게 할지 고민
+//                @Override
+//                public void handle(HttpExchange exchange) throws IOException {
+//                    System.out.println("Code "+exchange.getResponseCode());
+//                }
+//            });
             server.createContext("/api/", new HttpHandler() {
                 @Override
                 public void handle(HttpExchange exchange) {
@@ -92,7 +98,7 @@ public class TeriserClient {
         }
     }
 
-    private void postMethodInfo() {
+    public void postMethodInfo() {
         Gson gson = new GsonBuilder().create();
         JsonObject data = new JsonObject();
         data.addProperty("projectId", "ProjectId");
@@ -100,7 +106,7 @@ public class TeriserClient {
         requestCommand("POST", data);
     }
 
-    private void deleteMethodInfo(JsonObject data) {
+    public void deleteMethodInfo(JsonObject data) {
         requestCommand("DELETE", data);
     }
 

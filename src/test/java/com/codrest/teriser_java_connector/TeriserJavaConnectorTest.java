@@ -269,10 +269,4 @@ public class TeriserJavaConnectorTest {
 //        }
 //    }
 
-    @Test
-    @Order(4)
-    @DisplayName("MethodInfoTest")
-    public void MethodInfoTest() {
-        teriser.getMethodInfo();
-    }
 }

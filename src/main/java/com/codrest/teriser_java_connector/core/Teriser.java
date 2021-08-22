@@ -160,5 +160,4 @@ public class Teriser {
 
         return methodMap;
     }
-
 }
