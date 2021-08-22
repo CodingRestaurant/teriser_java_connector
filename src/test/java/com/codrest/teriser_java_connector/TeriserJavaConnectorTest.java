@@ -13,8 +13,11 @@ import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.testpackage.TestBot;
 import com.codrest.teriser_java_connector.testpackage.TestBot2;
 import com.codrest.teriser_java_connector.testpackage.TestBot3;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.*;
+
+import java.io.IOException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TeriserJavaConnectorTest {
@@ -35,9 +38,10 @@ public class TeriserJavaConnectorTest {
         teriser.addModule(TestBot.class);
         teriser.addModule(TestBot2.class);
         teriser.addModule(TestBot3.class);
-        teriser.run();
+
     }
-//
+
+    //
 //    @Test
 //    @Order(2)
 //    @DisplayName("MessageReceiveTest1")
@@ -187,73 +191,86 @@ public class TeriserJavaConnectorTest {
 //    }
 //
 //
+//    @Test
+//    @Order(2)
+//    @DisplayName("ClientMessageBuilderTest")
+//    public void ClientMessageBuilderTest() {
+//        JsonObject test = new JsonObject();
+//
+//        JsonArray array = new JsonArray();
+//
+//        JsonObject parameter1 = new JsonObject();
+//        parameter1.addProperty("String", "string1");
+//
+//        JsonObject parameter2 = new JsonObject();
+//        parameter2.addProperty("String", "string2");
+//
+//        JsonObject parameter3 = new JsonObject();
+//        parameter3.addProperty("int", "22222");
+//
+//        array.add(parameter1);
+//        array.add(parameter2);
+//        array.add(parameter3);
+//
+//        test.add("data", array);
+//
+//        DataPacketBuilder builder = new com.codrest.teriser_java_connector.core.DataPacketBuilder(1);
+//
+//        String data = builder
+//                .setMethodName("testMethod")
+//                .setMethodParameter(test)
+//                .buildClientMessage();
+//
+//        System.out.println("Client message "+data);
+//
+//        messageReceiver.onMessageReceived(data);
+//    }
+//
+//    @Test
+//    @Order(3)
+//    @DisplayName("ParameterTest_StringIntDouble")
+//    public void ParameterTest_StringIntDouble() {
+//        JsonObject test = new JsonObject();
+//
+//        JsonArray array = new JsonArray();
+//
+//        JsonObject parameter1 = new JsonObject();
+//        parameter1.addProperty("String", "string1");
+//
+//        JsonObject parameter2 = new JsonObject();
+//        parameter2.addProperty("int", "123456789");
+//
+//        JsonObject parameter3 = new JsonObject();
+//        parameter3.addProperty("double", "14.123");
+//
+//        array.add(parameter1);
+//        array.add(parameter2);
+//        array.add(parameter3);
+//
+//        test.add("data", array);
+//
+//        DataPacketBuilder builder = new com.codrest.teriser_java_connector.core.DataPacketBuilder(1);
+//
+//        String data = builder
+//                .setMethodName("testMethod2")
+//                .setMethodParameter(test)
+//                .buildClientMessage();
+//
+//        System.out.println("Client message "+data);
+//
+//        messageReceiver.onMessageReceived(data);
+//    }
+
     @Test
-    @Order(2)
-    @DisplayName("ClientMessageBuilderTest")
-    public void ClientMessageBuilderTest() {
-        JsonObject test = new JsonObject();
+    @Order(4)
+    @DisplayName("EndPointTest")
+    public void EndPointTest() {
+        teriser.run();
 
-        JsonArray array = new JsonArray();
-
-        JsonObject parameter1 = new JsonObject();
-        parameter1.addProperty("String", "string1");
-
-        JsonObject parameter2 = new JsonObject();
-        parameter2.addProperty("String", "string2");
-
-        JsonObject parameter3 = new JsonObject();
-        parameter3.addProperty("int", "22222");
-
-        array.add(parameter1);
-        array.add(parameter2);
-        array.add(parameter3);
-
-        test.add("data", array);
-
-        DataPacketBuilder builder = new com.codrest.teriser_java_connector.core.DataPacketBuilder(1);
-
-        String data = builder
-                .setMethodName("testMethod")
-                .setMethodParameter(test)
-                .buildClientMessage();
-
-        System.out.println("Client message "+data);
-
-        messageReceiver.onMessageReceived(data);
-    }
-
-    @Test
-    @Order(3)
-    @DisplayName("ParameterTest_StringIntDouble")
-    public void ParameterTest_StringIntDouble() {
-        JsonObject test = new JsonObject();
-
-        JsonArray array = new JsonArray();
-
-        JsonObject parameter1 = new JsonObject();
-        parameter1.addProperty("String", "string1");
-
-        JsonObject parameter2 = new JsonObject();
-        parameter2.addProperty("int", "123456789");
-
-        JsonObject parameter3 = new JsonObject();
-        parameter3.addProperty("double", "14.123");
-
-        array.add(parameter1);
-        array.add(parameter2);
-        array.add(parameter3);
-
-        test.add("data", array);
-
-        DataPacketBuilder builder = new com.codrest.teriser_java_connector.core.DataPacketBuilder(1);
-
-        String data = builder
-                .setMethodName("testMethod2")
-                .setMethodParameter(test)
-                .buildClientMessage();
-
-        System.out.println("Client message "+data);
-
-        messageReceiver.onMessageReceived(data);
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

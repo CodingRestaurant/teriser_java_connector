@@ -32,9 +32,20 @@ public class TeriserClient {
             server.createContext("/api/", new HttpHandler() {
                 @Override
                 public void handle(HttpExchange exchange) {
-                    if (!exchange.getRequestMethod().equals("GET") || !exchange.getRequestMethod().equals("POST")){
+                    if (exchange.getRequestMethod().equals("PUT")){
                         return;
                     }
+                    if (exchange.getRequestMethod().equals("DELETE")) {
+                        return;
+                    }
+                    if (exchange.getRequestMethod().equals("PATCH")) {
+                        return;
+                    }
+
+                    System.out.println("Query "+exchange.getRequestURI().getQuery());
+                    System.out.println("Path "+exchange.getRequestURI().getPath());
+
+
                     BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
 
                     StringBuilder builder = new StringBuilder();
