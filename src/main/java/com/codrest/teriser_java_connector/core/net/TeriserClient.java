@@ -29,10 +29,10 @@ public class TeriserClient {
     private void initClient(){
         try {
             server = HttpServer.create(new InetSocketAddress(10101), 0);
-            server.createContext("/", new HttpHandler() {
+            server.createContext("/api/", new HttpHandler() {
                 @Override
                 public void handle(HttpExchange exchange) {
-                    if (!exchange.getRequestMethod().equals("GET")){
+                    if (!exchange.getRequestMethod().equals("GET") || !exchange.getRequestMethod().equals("POST")){
                         return;
                     }
                     BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
