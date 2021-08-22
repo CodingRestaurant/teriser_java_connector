@@ -92,33 +92,41 @@ public class TeriserClient {
         }
     }
 
-    private void sendMethodInfo() {
+    private void postMethodInfo() {
+        Gson gson = new GsonBuilder().create();
+        JsonObject data = new JsonObject();
+        data.addProperty("projectId", "ProjectId");
+        data.addProperty("methods", gson.toJson(getMethodInfo.get()));
+        requestCommand("POST", data);
+    }
+
+    private void deleteMethodInfo(JsonObject data) {
+        requestCommand("DELETE", data);
+    }
+
+    public void patchMethodInfo(JsonObject data) {
+        requestCommand("PATCH", data);
+    }
+
+    private void requestCommand(String requestMethod, JsonObject data) {
         String springServerAddress = "127.0.0.1";
         try {
             URL url = new URL(springServerAddress);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            Gson gson = new GsonBuilder().create();
-
             connection.setRequestProperty("Content-Type", "application/json; utf-8");
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod(requestMethod);
             connection.setDoOutput(true);
-
-            JsonObject data = new JsonObject();
-            data.addProperty("projectId", "ProjectId");
-            data.addProperty("methods", gson.toJson(getMethodInfo.get()));
 
             try (OutputStream os = connection.getOutputStream()) {
                 os.write(data.toString().getBytes(StandardCharsets.UTF_8));
                 os.flush();
             }
 
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void startClient() {
