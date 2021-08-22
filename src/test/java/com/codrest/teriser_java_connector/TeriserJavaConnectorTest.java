@@ -6,18 +6,13 @@
 package com.codrest.teriser_java_connector;
 
 
-import com.codrest.teriser_java_connector.core.DataPacketBuilder;
 import com.codrest.teriser_java_connector.core.Teriser;
 import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.testpackage.TestBot;
 import com.codrest.teriser_java_connector.testpackage.TestBot2;
 import com.codrest.teriser_java_connector.testpackage.TestBot3;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import org.junit.jupiter.api.*;
-
-import java.io.IOException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TeriserJavaConnectorTest {
@@ -261,16 +256,23 @@ public class TeriserJavaConnectorTest {
 //        messageReceiver.onMessageReceived(data);
 //    }
 
+//    @Test
+//    @Order(4)
+//    @DisplayName("EndPointTest")
+//    public void EndPointTest() {
+//        teriser.run();
+//
+//        try {
+//            System.in.read();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     @Test
     @Order(4)
-    @DisplayName("EndPointTest")
-    public void EndPointTest() {
-        teriser.run();
-
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @DisplayName("MethodInfoTest")
+    public void MethodInfoTest() {
+        teriser.getMethodInfo();
     }
 }

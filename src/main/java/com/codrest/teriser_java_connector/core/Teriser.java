@@ -28,7 +28,7 @@ public class Teriser {
         this.token = token;
         this.messageReceiver = messageReceiver;
         messageReceiver.setMessageExecutor(this::handleMessage);
-        teriserClient = new TeriserClient(this::request);
+        teriserClient = new TeriserClient(this::request, this::getMethodInfo);
     }
 
 
@@ -128,7 +128,7 @@ public class Teriser {
             for (JsonElement parameter : parameterArray) {
                 JsonObject json = parameter.getAsJsonObject();
                 String type = json.keySet().iterator().next();
-                if (parameterType.getName().endsWith(type)){
+                if (parameterType.getName().endsWith(type)) {
                     args[i++] = gson.fromJson(json.get(type), parameterType);
                     parameterArray.remove(json);
                     break;
@@ -143,6 +143,22 @@ public class Teriser {
 
         }
         return args;
+    }
+
+    public Map<String, List<String>> getMethodInfo() {
+        Map<String, List<String>> methodMap = new HashMap<>();
+
+        for (String key : methods.keySet()) {
+            List<String> parameters = new ArrayList<>();
+            Method method = methods.get(key);
+            for (Class<?> parameterType : method.getParameterTypes()) {
+                String[] tokens = parameterType.getName().split("\\.");
+                parameters.add(tokens[tokens.length - 1]);
+            }
+            methodMap.put(method.getName(), parameters);
+        }
+
+        return methodMap;
     }
 
 }
