@@ -103,16 +103,16 @@ public class Teriser {
         } catch (IllegalAccessException e) {
             builder.setErrorMessage("No Parameter");
             builder.setResponseCode(ResponseCode.NullValue);
-            msg = builder.buildServerMessage("TempToken");
+            msg = builder.buildServerMessage(token);
             return msg;
         } catch (InvocationTargetException e1) {
             builder.setErrorMessage("No Method");
             builder.setResponseCode(ResponseCode.NullValue);
-            msg = builder.buildServerMessage("TempToken");
+            msg = builder.buildServerMessage(token);
             return msg;
         }
 
-        msg = builder.buildServerOkMessage("TempToken");
+        msg = builder.buildServerOkMessage(token);
 
         return msg;
     }
