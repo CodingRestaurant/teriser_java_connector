@@ -37,7 +37,7 @@ public class TeriserClient {
 
     private void initClient() {
         try {
-            server = HttpServer.create(new InetSocketAddress(10101), 0);
+            server = HttpServer.create(new InetSocketAddress(0), 0);
 //            server.createContext("/", new HttpHandler() { //TODO Response Code 받은 뒤 어떻게 할지 고민
 //                @Override
 //                public void handle(HttpExchange exchange) throws IOException {
