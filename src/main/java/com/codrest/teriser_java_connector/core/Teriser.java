@@ -28,7 +28,7 @@ public class Teriser {
         this.token = token;
         this.messageReceiver = messageReceiver;
         messageReceiver.setMessageExecutor(this::handleMessage);
-        teriserClient = new TeriserClient(this::request, this::getMethodInfo);
+        teriserClient = new TeriserClient(this::request, this::getMethodInfo, token);
     }
 
 
