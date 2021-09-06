@@ -47,12 +47,6 @@ public class TeriserClient {
     private void initClient() {
         try {
             server = HttpServer.create(new InetSocketAddress(0), 0);
-//            server.createContext("/", new HttpHandler() { //TODO Response Code 받은 뒤 어떻게 할지 고민
-//                @Override
-//                public void handle(HttpExchange exchange) throws IOException {
-//                    System.out.println("Code "+exchange.getResponseCode());
-//                }
-//            });
             server.createContext("/api/", new HttpHandler() {
                 @Override
                 public void handle(HttpExchange exchange) {
@@ -65,10 +59,6 @@ public class TeriserClient {
                     if (exchange.getRequestMethod().equals("PATCH")) {
                         return;
                     }
-
-                    System.out.println("Query " + exchange.getRequestURI().getQuery());
-                    System.out.println("Path " + exchange.getRequestURI().getPath());
-
 
                     BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
 
