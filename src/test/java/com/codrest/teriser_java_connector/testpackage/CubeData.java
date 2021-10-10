@@ -13,6 +13,13 @@ public class CubeData {
     private String name;
     private User user;
 
+    public CubeData(String name) {
+        this.name = name;
+    }
+
+    public CubeData() {
+    }
+
     @Override
     public String toString() {
         return "CubeData{" +

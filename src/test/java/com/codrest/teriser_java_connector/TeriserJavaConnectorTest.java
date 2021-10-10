@@ -6,13 +6,25 @@
 package com.codrest.teriser_java_connector;
 
 
+import com.codrest.teriser_java_connector.core.ClientMessage;
+import com.codrest.teriser_java_connector.core.DataPacketBuilder;
 import com.codrest.teriser_java_connector.core.Teriser;
 import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
+import com.codrest.teriser_java_connector.testpackage.CubeData;
 import com.codrest.teriser_java_connector.testpackage.TestBot;
 import com.codrest.teriser_java_connector.testpackage.TestBot2;
 import com.codrest.teriser_java_connector.testpackage.TestBot3;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.*;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TeriserJavaConnectorTest {
@@ -24,16 +36,59 @@ public class TeriserJavaConnectorTest {
     public void Init() {
         messageReceiver = new MessageReceiver();
         teriser = TeriserJavaConnector.Make("ABC", messageReceiver);
+        teriser.addModule(TestBot.class);
+        teriser.addModule(TestBot2.class);
+        teriser.addModule(TestBot3.class);
     }
 
     @Test
     @Order(1)
     @DisplayName("ModuleAddTest")
     public void ModuleAddTest() {
-        teriser.addModule(TestBot.class);
-        teriser.addModule(TestBot2.class);
-        teriser.addModule(TestBot3.class);
+        Gson gson = new GsonBuilder().create();
+        JsonArray array = new JsonArray();
 
+        JsonObject p1 = new JsonObject();
+        List<CubeData> testdata = new ArrayList<>();
+        testdata.add(new CubeData("name1"));
+        testdata.add(new CubeData("name2"));
+        testdata.add(new CubeData("name3"));
+        testdata.add(new CubeData("name4"));
+
+
+        p1.addProperty("List<" + Integer.class.getCanonicalName() + ">", gson.toJson(testdata));
+
+        JsonObject p2 = new JsonObject();
+        p2.addProperty("String", "Hi");
+
+        JsonObject p3 = new JsonObject();
+        p3.addProperty("double", 123.456);
+
+        array.add(p1);
+        array.add(p2);
+        array.add(p3);
+
+
+        JsonObject parameterObject = new JsonObject();
+        parameterObject.add("data", array);
+
+        String msg = gson.toJson(new ClientMessage("arrayMethod2", parameterObject));
+
+        System.out.println("Msg " + msg);
+
+        teriser.handleMessage(msg);
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("ListTest")
+    public void ListTest() {
+        Gson gson = new Gson();
+        String json = "[ \"Adam\", \"John\", \"Mary\" ]";
+
+        Type type = new TypeToken<List<String>>(){}.getType();
+        List<String> members = gson.fromJson(json, type);
+        System.out.println("Members "+members);
     }
 
     //
