@@ -98,7 +98,7 @@ public class TeriserClient {
     }
 
     private void startSendingAlive() {
-        executor.scheduleWithFixedDelay(this::sendAlive, 0, 30, TimeUnit.SECONDS);
+        executor.scheduleWithFixedDelay(this::sendAlive, 0, 3, TimeUnit.SECONDS);
     }
 
     public void stopSendingAlive() {
@@ -107,8 +107,9 @@ public class TeriserClient {
 
     private void sendAlive() {
         try {
+            System.out.println("SendAlive");
             URL url = new URL("http://120.142.140.116:18089/api/alive/fishfish");
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Content-Type", "application/json; utf-8");
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
@@ -117,10 +118,14 @@ public class TeriserClient {
             data.addProperty("token", token);
             data.addProperty("port", serverAddress.getPort());
 
+            System.out.println("Data "+data);
+
             OutputStream os = connection.getOutputStream();
             os.write(data.toString().getBytes(StandardCharsets.UTF_8));
             os.flush();
             os.close();
+
+            connection.getInputStream().readAllBytes();
         } catch (IOException e) {
             e.printStackTrace();
         }
