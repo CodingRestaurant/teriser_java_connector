@@ -9,6 +9,7 @@ import com.codrest.teriser_java_connector.annotation.Api;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.core.net.TeriserClient;
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -83,11 +84,10 @@ public class Teriser {
         return messageReceiver.onMessageReceived(formattedJson);
     }
 
-    private String handleMessage(String formattedJson) {
+    public String handleMessage(String formattedJson) {
         JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
         String methodName = jsonObject.get("method").getAsString();
         JsonElement parameters = jsonObject.get("parameters");
-        int messageID = jsonObject.get("messageID").getAsInt();
 
         Method targetMethod = methods.get(methodName);
         Object[] args = makeArgs(targetMethod, parameters.getAsJsonObject());
@@ -128,18 +128,18 @@ public class Teriser {
             for (JsonElement parameter : parameterArray) {
                 JsonObject json = parameter.getAsJsonObject();
                 String type = json.keySet().iterator().next();
-                if (parameterType.getName().endsWith(type)) {
+                if (parameterType.getName().contains("List")){
+                    //TODO Int value changed Double value by Gson
+                    args[i++] = gson.fromJson(json.get(type).getAsString().replace("\\",""), TypeToken.get(parameterType).getType());
+                    parameterArray.remove(json);
+                    break;
+                }
+                else if (parameterType.getName().endsWith(type)) {
                     args[i++] = gson.fromJson(json.get(type), parameterType);
                     parameterArray.remove(json);
                     break;
                 }
             }
-
-//            for (Map.Entry<String, JsonElement> namedJsonElement : data.entrySet()) {
-//                if (parameterType.getName().endsWith(namedJsonElement.getKey())) {
-//                    args[i++] = gson.fromJson(namedJsonElement.getValue(), parameterType);
-//                }
-//            }
 
         }
         return args;
