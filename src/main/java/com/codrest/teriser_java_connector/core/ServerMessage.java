@@ -14,14 +14,12 @@ import java.util.Arrays;
 public class ServerMessage {
 
     private String token;
-    private int messageID;
     private String responseCode;
     private String[] data;
     private String errorMessage;
 
-    public ServerMessage(String token, int messageID, String responseCode, String[] data, String errorMessage) {
+    public ServerMessage(String token, String responseCode, String[] data, String errorMessage) {
         this.token = token;
-        this.messageID = messageID;
         this.responseCode = responseCode;
         this.data = data;
         this.errorMessage = errorMessage;
@@ -30,13 +28,11 @@ public class ServerMessage {
     /**
      * Server Error Message
      *
-     * @param messageID    Identify message (use same requestCode in client message)
      * @param responseCode result Code (follow http status code)
      * @param errorMessage Error log
      */
-    public ServerMessage(String token, int messageID, String responseCode, String errorMessage) {
+    public ServerMessage(String token, String responseCode, String errorMessage) {
         this.token = token;
-        this.messageID = messageID;
         this.responseCode = responseCode;
         this.errorMessage = errorMessage;
         data = null;
@@ -45,13 +41,11 @@ public class ServerMessage {
     /**
      * Server Success Message
      *
-     * @param messageID    Identify message (use same requestCode in client message)
      * @param responseCode result Code (follow http status code)
      * @param data         requested method result
      */
-    public ServerMessage(String token, int messageID, String responseCode, String[] data) {
+    public ServerMessage(String token, String responseCode, String[] data) {
         this.token = token;
-        this.messageID = messageID;
         this.responseCode = responseCode;
         this.data = data;
         errorMessage = null;
@@ -61,7 +55,6 @@ public class ServerMessage {
     public String toString() {
         return "ServerMessage{" +
                 "token=" + token +
-                "messageID=" + messageID +
                 ", responseCode='" + responseCode + '\'' +
                 ", data=" + Arrays.toString(data) +
                 ", errorMessage='" + errorMessage + '\'' +

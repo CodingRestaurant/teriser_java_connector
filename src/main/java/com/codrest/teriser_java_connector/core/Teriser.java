@@ -92,7 +92,7 @@ public class Teriser {
         Method targetMethod = methods.get(methodName);
         Object[] args = makeArgs(targetMethod, parameters.getAsJsonObject());
 
-        DataPacketBuilder builder = new DataPacketBuilder(messageID);
+        DataPacketBuilder builder = new DataPacketBuilder();
 
         String msg = "";
 
