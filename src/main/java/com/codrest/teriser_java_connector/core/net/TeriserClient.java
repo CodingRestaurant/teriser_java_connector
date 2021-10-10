@@ -1,9 +1,6 @@
 package com.codrest.teriser_java_connector.core.net;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -124,23 +121,30 @@ public class TeriserClient {
         }
     }
 
-    public void postMethodInfo() {
-        Gson gson = new GsonBuilder().create();
-        JsonObject data = new JsonObject();
-        data.addProperty("projectId", "ProjectId");
-        data.addProperty("methods", gson.toJson(getMethodInfo.get()));
-        requestCommand("POST", data);
+    public void createMethodInfo() {
+        Map<String, List<String>> methodMap = getMethodInfo.get();
+
+        for (String key : methodMap.keySet()){
+            JsonArray parameterArray = new JsonArray();
+            List<String> parameters = methodMap.get(key);
+            for (String p : parameters) {
+                parameterArray.add(p);
+            }
+            JsonObject data = new JsonObject();
+            data.add("parameters", parameterArray);
+            requestCommand("POST", key, data);
+        }
     }
 
-    public void deleteMethodInfo(JsonObject data) {
-        requestCommand("DELETE", data);
-    }
+//    public void deleteMethodInfo(JsonObject data) {
+//        requestCommand("DELETE", data);
+//    }
+//
+//    public void patchMethodInfo(JsonObject data) {
+//        requestCommand("PATCH", data);
+//    }
 
-    public void patchMethodInfo(JsonObject data) {
-        requestCommand("PATCH", data);
-    }
-
-    private void requestCommand(String requestMethod, JsonObject data) {
+    private void requestCommand(String requestMethod, String methodName, JsonObject data) {
         String springServerAddress = "127.0.0.1";
         try {
             URL url = new URL(springServerAddress);
