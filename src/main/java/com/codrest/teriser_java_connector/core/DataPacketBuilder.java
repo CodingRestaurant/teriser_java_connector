@@ -79,7 +79,7 @@ public class DataPacketBuilder {
     }
 
     public String buildServerOkMessage(String token){
-        ServerMessage serverMessage = new ServerMessage(token, ResponseCode.OK, data, null);
+        ServerMessage serverMessage = new ServerMessage(token, ResponseCode.OK, data, "success");
         return gson.toJson(serverMessage);
     }
 }

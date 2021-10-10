@@ -20,14 +20,15 @@ public class Teriser {
     private String token;
     private MessageReceiver messageReceiver;
     private TeriserClient teriserClient;
-
+    private String projectName;
     Set<Class<?>> classes = new HashSet<>();
     Map<String, Method> methods = new HashMap<>();
     Map<String, Object> instances = new HashMap<>();
 
-    public Teriser(String token, MessageReceiver messageReceiver) {
+    public Teriser(String token, MessageReceiver messageReceiver, String projectName) {
         this.token = token;
         this.messageReceiver = messageReceiver;
+        this.projectName = projectName;
         messageReceiver.setMessageExecutor(this::handleMessage);
         teriserClient = new TeriserClient(this::request, this::getMethodInfo, token);
     }

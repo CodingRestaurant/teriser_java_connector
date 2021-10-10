@@ -33,6 +33,8 @@ public class TeriserClient {
     private ScheduledExecutorService executor;
     private String token;
 
+    private InetSocketAddress serverAddress = new InetSocketAddress(10101);
+
     public TeriserClient(Function<String, String> requestQuery, Supplier<Map<String, List<String>>> getMethodInfo, String token) {
         this.requestQuery = requestQuery;
         this.getMethodInfo = getMethodInfo;
@@ -43,8 +45,8 @@ public class TeriserClient {
 
     private void initClient() {
         try {
-            server = HttpServer.create(new InetSocketAddress(0), 0);
-            server.createContext("/api/", new HttpHandler() {
+            server = HttpServer.create(serverAddress, 0);
+            server.createContext("/api", new HttpHandler() {
                 @Override
                 public void handle(HttpExchange exchange) {
                     if (exchange.getRequestMethod().equals("PUT")) {
@@ -74,7 +76,7 @@ public class TeriserClient {
 
                     Headers headers = exchange.getResponseHeaders();
                     headers.add("Content-Type", "application/json");
-                    headers.add("Content-Length", String.valueOf(result));
+                    headers.add("Content-Length", String.valueOf(result.length()));
 
                     JsonObject msg = JsonParser.parseString(result).getAsJsonObject();
                     int code = msg.get("responseCode").getAsInt();
@@ -84,6 +86,7 @@ public class TeriserClient {
                         exchange.sendResponseHeaders(code, result.length());
                         stream.write(result.getBytes(StandardCharsets.UTF_8));
                         stream.flush();
+                        stream.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -104,7 +107,7 @@ public class TeriserClient {
 
     private void sendAlive() {
         try {
-            URL url = new URL("teriser.codrest.com/projects/alive");
+            URL url = new URL("http://120.142.140.116:18089/api/alive/fishfish");
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestProperty("Content-Type", "application/json; utf-8");
             connection.setRequestMethod("POST");
@@ -112,10 +115,12 @@ public class TeriserClient {
 
             JsonObject data = new JsonObject();
             data.addProperty("token", token);
+            data.addProperty("port", serverAddress.getPort());
 
             OutputStream os = connection.getOutputStream();
             os.write(data.toString().getBytes(StandardCharsets.UTF_8));
             os.flush();
+            os.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -145,7 +150,7 @@ public class TeriserClient {
 //    }
 
     private void requestCommand(String requestMethod, String methodName, JsonObject data) {
-        String springServerAddress = "127.0.0.1";
+        String springServerAddress = "http://120.142.140.116:18089/projects/fishfish/"+methodName;
         try {
             URL url = new URL(springServerAddress);
 
@@ -159,7 +164,7 @@ public class TeriserClient {
                 os.write(data.toString().getBytes(StandardCharsets.UTF_8));
                 os.flush();
             }
-
+            connection.getInputStream().readAllBytes();
         } catch (IOException e) {
             e.printStackTrace();
         }
