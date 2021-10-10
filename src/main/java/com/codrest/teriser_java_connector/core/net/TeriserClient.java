@@ -168,6 +168,7 @@ public class TeriserClient {
     public void startClient() {
         server.start();
         startSendingAlive();
+        createMethodInfo();
     }
 
     public void stopClient() {
