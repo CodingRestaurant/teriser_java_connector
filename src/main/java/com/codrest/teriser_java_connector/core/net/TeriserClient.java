@@ -109,6 +109,7 @@ public class TeriserClient {
         try {
             System.out.println("SendAlive");
             URL url = new URL("http://120.142.140.116:18089/api/alive/fishfish");
+//            URL url = new URL("http://localhost:8080/api/alive/fishfish");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Content-Type", "application/json; utf-8");
             connection.setRequestMethod("POST");
@@ -156,6 +157,7 @@ public class TeriserClient {
 
     private void requestCommand(String requestMethod, String methodName, JsonObject data) {
         String springServerAddress = "http://120.142.140.116:18089/projects/fishfish/"+methodName;
+//        String springServerAddress = "http://localhost:8080/projects/fishfish/"+methodName;
         try {
             URL url = new URL(springServerAddress);
 

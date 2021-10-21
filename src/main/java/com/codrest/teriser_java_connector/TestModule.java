@@ -10,4 +10,10 @@ public class TestModule {
         return "MyMethod Called";
     }
 
+    @Api
+    public String myMethod3(String value1, int value2) {
+        System.out.println("MyMethod3 in Stringvalue "+value1+" intvalue "+value2);
+        return "MyMethod3 Called";
+    }
+
 }
