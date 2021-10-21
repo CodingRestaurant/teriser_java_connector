@@ -1,12 +1,13 @@
 package com.codrest.teriser_java_connector.core.net;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,10 +18,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -30,7 +28,6 @@ public class TeriserClient {
     private Function<String, String> requestQuery;
     private Supplier<Map<String, List<String>>> getMethodInfo;
     private HttpServer server;
-    private ScheduledExecutorService executor;
     private String token;
 
     private InetSocketAddress serverAddress = new InetSocketAddress(10101);
@@ -38,7 +35,6 @@ public class TeriserClient {
     public TeriserClient(Function<String, String> requestQuery, Supplier<Map<String, List<String>>> getMethodInfo, String token) {
         this.requestQuery = requestQuery;
         this.getMethodInfo = getMethodInfo;
-        executor = Executors.newSingleThreadScheduledExecutor();
         this.token = token;
         initClient();
     }
@@ -97,45 +93,10 @@ public class TeriserClient {
         }
     }
 
-    private void startSendingAlive() {
-        executor.scheduleWithFixedDelay(this::sendAlive, 0, 3, TimeUnit.SECONDS);
-    }
-
-    public void stopSendingAlive() {
-        executor.shutdownNow();
-    }
-
-    private void sendAlive() {
-        try {
-            System.out.println("SendAlive");
-            URL url = new URL("http://120.142.140.116:18089/api/alive/fishfish");
-//            URL url = new URL("http://localhost:8080/api/alive/fishfish");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("Content-Type", "application/json; utf-8");
-            connection.setRequestMethod("POST");
-            connection.setDoOutput(true);
-
-            JsonObject data = new JsonObject();
-            data.addProperty("token", token);
-            data.addProperty("port", serverAddress.getPort());
-
-            System.out.println("Data "+data);
-
-            OutputStream os = connection.getOutputStream();
-            os.write(data.toString().getBytes(StandardCharsets.UTF_8));
-            os.flush();
-            os.close();
-
-            connection.getInputStream().readAllBytes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void createMethodInfo() {
         Map<String, List<String>> methodMap = getMethodInfo.get();
 
-        for (String key : methodMap.keySet()){
+        for (String key : methodMap.keySet()) {
             JsonArray parameterArray = new JsonArray();
             List<String> parameters = methodMap.get(key);
             for (String p : parameters) {
@@ -156,7 +117,7 @@ public class TeriserClient {
 //    }
 
     private void requestCommand(String requestMethod, String methodName, JsonObject data) {
-        String springServerAddress = "http://120.142.140.116:18089/projects/fishfish/"+methodName;
+        String springServerAddress = "http://120.142.140.116:18089/projects/fishfish/" + methodName;
 //        String springServerAddress = "http://localhost:8080/projects/fishfish/"+methodName;
         try {
             URL url = new URL(springServerAddress);
@@ -179,13 +140,11 @@ public class TeriserClient {
 
     public void startClient() {
         server.start();
-        startSendingAlive();
         createMethodInfo();
     }
 
     public void stopClient() {
         server.stop(2);
-        stopSendingAlive();
     }
 
 }
