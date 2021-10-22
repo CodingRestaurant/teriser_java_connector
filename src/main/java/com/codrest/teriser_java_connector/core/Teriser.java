@@ -8,6 +8,7 @@ package com.codrest.teriser_java_connector.core;
 import com.codrest.teriser_java_connector.annotation.Api;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.core.net.TeriserClient;
+import com.codrest.teriser_java_connector.core.net.TeriserServerConnector;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
@@ -20,6 +21,7 @@ public class Teriser {
     private String token;
     private MessageReceiver messageReceiver;
     private TeriserClient teriserClient;
+    private TeriserServerConnector teriserServerConnector;
     private String projectName;
     Set<Class<?>> classes = new HashSet<>();
     Map<String, Method> methods = new HashMap<>();
@@ -30,7 +32,8 @@ public class Teriser {
         this.messageReceiver = messageReceiver;
         this.projectName = projectName;
         messageReceiver.setMessageExecutor(this::handleMessage);
-        teriserClient = new TeriserClient(this::request, this::getMethodInfo, token);
+        teriserClient = new TeriserClient(this::request);
+        teriserServerConnector = new TeriserServerConnector(this::getMethodInfo);
     }
 
 
@@ -77,6 +80,7 @@ public class Teriser {
 
     public void run() {
         teriserClient.startClient();
+        teriserServerConnector.start();
         System.out.println("Teriser client is Running");
         methods.forEach((name, method) -> System.out.println(name + ":" + method));
     }

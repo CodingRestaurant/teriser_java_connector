@@ -4,10 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
@@ -15,15 +12,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class SpringClient {
+public class TeriserServerConnector {
 
     private SocketChannel socketChannel;
     private Supplier<Map<String, List<String>>> getMethodInfo;
 
-    public SpringClient(Supplier<Map<String, List<String>>> getMethodInfo) {
+    public TeriserServerConnector(Supplier<Map<String, List<String>>> getMethodInfo) {
         this.getMethodInfo = getMethodInfo;
+    }
+
+    public void start() {
         try {
             socketChannel = SocketChannel.open(new InetSocketAddress(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stop() {
+        try {
+            socketChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
