@@ -10,14 +10,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class TeriserJavaConnector {
 
-    public static Teriser Make(@NotNull String token, String projectName){
+    public static Teriser Make(@NotNull String token){
 
-        return new Teriser(token, new MessageReceiver(), projectName);
+        return new Teriser(token, new MessageReceiver());
     }
 
-    public static Teriser Make(@NotNull String token, MessageReceiver messageReceiver, String projectName){
+    public static Teriser Make(@NotNull String token, MessageReceiver messageReceiver){
 
-        return new Teriser(token, messageReceiver, projectName);
+        return new Teriser(token, messageReceiver);
     }
 
 }

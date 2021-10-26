@@ -35,7 +35,7 @@ public class TeriserJavaConnectorTest {
     @BeforeAll
     public void Init() {
         messageReceiver = new MessageReceiver();
-        teriser = TeriserJavaConnector.Make("ABC", messageReceiver, "test");
+        teriser = TeriserJavaConnector.Make("ABC", messageReceiver);
         teriser.addModule(TestBot.class);
         teriser.addModule(TestBot2.class);
         teriser.addModule(TestBot3.class);

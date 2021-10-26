@@ -22,18 +22,16 @@ public class Teriser {
     private MessageReceiver messageReceiver;
     private TeriserClient teriserClient;
     private TeriserServerConnector teriserServerConnector;
-    private String projectName;
     Set<Class<?>> classes = new HashSet<>();
     Map<String, Method> methods = new HashMap<>();
     Map<String, Object> instances = new HashMap<>();
 
-    public Teriser(String token, MessageReceiver messageReceiver, String projectName) {
+    public Teriser(String token, MessageReceiver messageReceiver) {
         this.token = token;
         this.messageReceiver = messageReceiver;
-        this.projectName = projectName;
         messageReceiver.setMessageExecutor(this::handleMessage);
-        teriserClient = new TeriserClient(this::request);
-        teriserServerConnector = new TeriserServerConnector(this::getMethodInfo);
+//        teriserClient = new TeriserClient(this::request);
+        teriserServerConnector = new TeriserServerConnector(this::getMethodInfo, token);
     }
 
 
@@ -79,8 +77,8 @@ public class Teriser {
     }
 
     public void run() {
-        teriserClient.startClient();
-        teriserServerConnector.start();
+//        teriserClient.startClient();
+        teriserServerConnector.connectToProcessServer();
         System.out.println("Teriser client is Running");
         methods.forEach((name, method) -> System.out.println(name + ":" + method));
     }
@@ -162,6 +160,8 @@ public class Teriser {
             }
             methodMap.put(method.getName(), parameters);
         }
+
+        System.out.println(methodMap);
 
         return methodMap;
     }
