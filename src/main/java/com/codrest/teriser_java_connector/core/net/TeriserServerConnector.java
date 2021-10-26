@@ -111,16 +111,20 @@ public class TeriserServerConnector {
 
     public void connectToProcessServer() {
 
+        JsonObject data = createMethodInfo();
+        data.addProperty("Token", token);
+
+
         Connection connection = TcpClient.create()
                 .host("cs0.teriser.codrest.com")
                 .port(25565)//Fixed port
 //                .secure(spec -> spec.sslContext(TcpSslContextSpec.forClient()))
                 .handle((inbound, outbound) ->
 
-                        outbound.sendString(Mono.just(token))
+                        outbound.sendString(Mono.just(data.toString()))
                                 .then(
                                         inbound.receive().flatMap(byteBuf -> {
-                                            System.out.println("Test " + byteBuf.toString(StandardCharsets.UTF_8));
+                                            System.out.println("RES " + byteBuf.toString(StandardCharsets.UTF_8));
                                             return Mono.empty();
                                         })
                                 )
@@ -131,18 +135,4 @@ public class TeriserServerConnector {
         connection.onDispose().block();
     }
 
-    private Publisher<Void> handler(NettyInbound inbound, NettyOutbound outbound) {
-        System.out.println("handler in");
-
-        outbound.sendString(Mono.just("Data"));
-        System.out.println("send block");
-
-
-//        return outbound.send(ByteBufFlux.fromString(Mono.just("DataDataDataDataDataDataData")));
-        System.out.println("data " + inbound.receive().aggregate().asString());
-
-        System.out.println("Receive block");
-        return s -> {
-        };
-    }
 }
