@@ -36,9 +36,8 @@ public class TeriserJavaConnectorTest {
     public void Init() {
         messageReceiver = new MessageReceiver();
         teriser = TeriserJavaConnector.Make("ABC", messageReceiver);
-        teriser.addModule(TestBot.class);
-        teriser.addModule(TestBot2.class);
         teriser.addModule(TestBot3.class);
+
     }
 
     @Test
@@ -56,23 +55,26 @@ public class TeriserJavaConnectorTest {
         testdata.add(new CubeData("name4"));
 
 
-        p1.addProperty("List<" + Integer.class.getCanonicalName() + ">", gson.toJson(testdata));
-
+        p1.addProperty("String", "String value1");
         JsonObject p2 = new JsonObject();
-        p2.addProperty("String", "Hi");
-
+        p2.addProperty("String", "String value2");
         JsonObject p3 = new JsonObject();
-        p3.addProperty("double", 123.456);
+        p3.addProperty("int", "123");
+
+//        p1.addProperty("List<" + Integer.class.getCanonicalName() + ">", gson.toJson(testdata));
+//
+//        JsonObject p2 = new JsonObject();
+//        p2.addProperty("String", "Hi");
+//
+//        JsonObject p3 = new JsonObject();
+//        p3.addProperty("double", 123.456);
 
         array.add(p1);
         array.add(p2);
         array.add(p3);
 
 
-        JsonObject parameterObject = new JsonObject();
-        parameterObject.add("data", array);
-
-        String msg = gson.toJson(new ClientMessage("arrayMethod2", parameterObject));
+        String msg = gson.toJson(new ClientMessage("testMethod", array));
 
         System.out.println("Msg " + msg);
 
@@ -81,15 +83,25 @@ public class TeriserJavaConnectorTest {
 
     @Test
     @Order(2)
-    @DisplayName("ListTest")
-    public void ListTest() {
-        Gson gson = new Gson();
-        String json = "[ \"Adam\", \"John\", \"Mary\" ]";
+    @DisplayName("addMethod")
+    public void addMethod() {
+        JsonObject json = teriser.socketTest.createMethodInfo();
+        json.addProperty("Token", "TokenValue");
 
-        Type type = new TypeToken<List<String>>(){}.getType();
-        List<String> members = gson.fromJson(json, type);
-        System.out.println("Members "+members);
+        System.out.println("Data "+json);
     }
+
+//    @Test
+//    @Order(2)
+//    @DisplayName("ListTest")
+//    public void ListTest() {
+//        Gson gson = new Gson();
+//        String json = "[ \"Adam\", \"John\", \"Mary\" ]";
+//
+//        Type type = new TypeToken<List<String>>(){}.getType();
+//        List<String> members = gson.fromJson(json, type);
+//        System.out.println("Members "+members);
+//    }
 
     //
 //    @Test
@@ -264,7 +276,7 @@ public class TeriserJavaConnectorTest {
 //
 //        test.add("data", array);
 //
-//        DataPacketBuilder builder = new com.codrest.teriser_java_connector.core.DataPacketBuilder(1);
+//        DataPacketBuilder builder = new DataPacketBuilder();
 //
 //        String data = builder
 //                .setMethodName("testMethod")

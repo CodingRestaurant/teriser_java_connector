@@ -2,13 +2,14 @@ package com.codrest.teriser_java_connector.core;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class DataPacketBuilder {
 
     private String token;
     private String methodName;
-    private JsonObject methodParameter;
+    private JsonArray methodParameter;
     private String responseCode;
     private String[] data;
     private String errorMessage;
@@ -28,7 +29,7 @@ public class DataPacketBuilder {
         return this;
     }
 
-    public DataPacketBuilder setMethodParameter(JsonObject parameter) {
+    public DataPacketBuilder setMethodParameter(JsonArray parameter) {
         this.methodParameter = parameter;
         return this;
     }

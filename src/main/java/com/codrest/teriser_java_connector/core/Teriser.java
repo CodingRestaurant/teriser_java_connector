@@ -18,20 +18,21 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class Teriser {
+
     private String token;
     private MessageReceiver messageReceiver;
-    private TeriserClient teriserClient;
     private TeriserServerConnector teriserServerConnector;
     Set<Class<?>> classes = new HashSet<>();
     Map<String, Method> methods = new HashMap<>();
     Map<String, Object> instances = new HashMap<>();
+    public TeriserClient socketTest;
 
     public Teriser(String token, MessageReceiver messageReceiver) {
         this.token = token;
         this.messageReceiver = messageReceiver;
         messageReceiver.setMessageExecutor(this::handleMessage);
-//        teriserClient = new TeriserClient(this::request);
         teriserServerConnector = new TeriserServerConnector(this::getMethodInfo, token);
+        socketTest = new TeriserClient(this::request, this::getMethodInfo);
     }
 
 
@@ -77,10 +78,11 @@ public class Teriser {
     }
 
     public void run() {
-//        teriserClient.startClient();
-        teriserServerConnector.connectToProcessServer();
+
         System.out.println("Teriser client is Running");
         methods.forEach((name, method) -> System.out.println(name + ":" + method));
+        socketTest.initConnection(token);
+//        teriserServerConnector.connectToProcessServer();
     }
 
     public String request(String formattedJson) {
@@ -90,10 +92,10 @@ public class Teriser {
     public String handleMessage(String formattedJson) {
         JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
         String methodName = jsonObject.get("method").getAsString();
-        JsonElement parameters = jsonObject.get("parameters");
+        JsonArray parameters = jsonObject.get("parameters").getAsJsonArray();
 
         Method targetMethod = methods.get(methodName);
-        Object[] args = makeArgs(targetMethod, parameters.getAsJsonObject());
+        Object[] args = makeArgs(targetMethod, parameters);
 
         DataPacketBuilder builder = new DataPacketBuilder();
 
@@ -104,15 +106,12 @@ public class Teriser {
                     new String[]{(String) targetMethod.invoke(instances.get(methodName), args)}
             );
         } catch (IllegalAccessException e) {
-            builder.setErrorMessage("No Parameter");
+            builder.setErrorMessage("Not Enough Parameter");
             builder.setResponseCode(ResponseCode.NullValue);
             msg = builder.buildServerMessage(token);
             return msg;
-        } catch (InvocationTargetException e1) {
-            builder.setErrorMessage("No Method");
-            builder.setResponseCode(ResponseCode.NullValue);
-            msg = builder.buildServerMessage(token);
-            return msg;
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
 
         msg = builder.buildServerOkMessage(token);
@@ -120,26 +119,23 @@ public class Teriser {
         return msg;
     }
 
-    public Object[] makeArgs(Method targetMethod, JsonObject data) {
+    public Object[] makeArgs(Method targetMethod, JsonArray data) {
         Object[] args = new Object[targetMethod.getParameterCount()];
-
-        JsonArray parameterArray = data.get("data").getAsJsonArray();
 
         int i = 0;
         for (Class<?> parameterType : targetMethod.getParameterTypes()) {
             Gson gson = new Gson();
-            for (JsonElement parameter : parameterArray) {
+            for (JsonElement parameter : data) {
                 JsonObject json = parameter.getAsJsonObject();
                 String type = json.keySet().iterator().next();
                 if (parameterType.getName().contains("List")){
-                    //TODO Int value changed Double value by Gson
                     args[i++] = gson.fromJson(json.get(type).getAsString().replace("\\",""), TypeToken.get(parameterType).getType());
-                    parameterArray.remove(json);
+                    data.remove(json);
                     break;
                 }
                 else if (parameterType.getName().endsWith(type)) {
                     args[i++] = gson.fromJson(json.get(type), parameterType);
-                    parameterArray.remove(json);
+                    data.remove(json);
                     break;
                 }
             }

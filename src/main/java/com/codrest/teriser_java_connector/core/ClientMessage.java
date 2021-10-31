@@ -1,5 +1,6 @@
 package com.codrest.teriser_java_connector.core;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /**
@@ -15,9 +16,9 @@ import com.google.gson.JsonObject;
 public class ClientMessage {
 
     private String method;
-    private JsonObject parameters;
+    private JsonArray parameters;
 
-    public ClientMessage(String methodName, JsonObject parameters) {
+    public ClientMessage(String methodName, JsonArray parameters) {
         this.method = methodName;
         this.parameters = parameters;
     }
