@@ -7,22 +7,14 @@ package com.codrest.teriser_java_connector;
 
 
 import com.codrest.teriser_java_connector.core.ClientMessage;
-import com.codrest.teriser_java_connector.core.DataPacketBuilder;
 import com.codrest.teriser_java_connector.core.Teriser;
 import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.testpackage.CubeData;
-import com.codrest.teriser_java_connector.testpackage.TestBot;
-import com.codrest.teriser_java_connector.testpackage.TestBot2;
 import com.codrest.teriser_java_connector.testpackage.TestBot3;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.*;
 import org.junit.jupiter.api.*;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,33 +40,25 @@ public class TeriserJavaConnectorTest {
         JsonArray array = new JsonArray();
 
         JsonObject p1 = new JsonObject();
-        List<CubeData> testdata = new ArrayList<>();
-        testdata.add(new CubeData("name1"));
-        testdata.add(new CubeData("name2"));
-        testdata.add(new CubeData("name3"));
-        testdata.add(new CubeData("name4"));
+        JsonArray testdata = new JsonArray();
+        testdata.add("test1");
+        testdata.add("test2");
+        testdata.add("test3");
 
+        p1.add("String[]", testdata);
 
-        p1.addProperty("String", "String value1");
+        JsonArray testdata2 = new JsonArray();
+        testdata2.add(1.0);
+        testdata2.add(2.0);
+        testdata2.add(3.0);
+
         JsonObject p2 = new JsonObject();
-        p2.addProperty("String", "String value2");
-        JsonObject p3 = new JsonObject();
-        p3.addProperty("int", "123");
-
-//        p1.addProperty("List<" + Integer.class.getCanonicalName() + ">", gson.toJson(testdata));
-//
-//        JsonObject p2 = new JsonObject();
-//        p2.addProperty("String", "Hi");
-//
-//        JsonObject p3 = new JsonObject();
-//        p3.addProperty("double", 123.456);
+        p2.add("List<" + Double.class.getCanonicalName() + ">", testdata2);
 
         array.add(p1);
         array.add(p2);
-        array.add(p3);
 
-
-        String msg = gson.toJson(new ClientMessage("testMethod", array));
+        String msg = gson.toJson(new ClientMessage("myMethod5", array));
 
         System.out.println("Msg " + msg);
 
@@ -83,12 +67,109 @@ public class TeriserJavaConnectorTest {
 
     @Test
     @Order(2)
-    @DisplayName("addMethod")
-    public void addMethod() {
-        JsonObject json = teriser.socketTest.createMethodInfo();
-        json.addProperty("Token", "TokenValue");
+    @DisplayName("ModuleAddTest2")
+    public void ModuleAddTest2() {
+        Gson gson = new GsonBuilder().create();
+        JsonArray array = new JsonArray();
 
-        System.out.println("Data "+json);
+        JsonObject p1 = new JsonObject();
+
+        p1.addProperty("String", "test1");
+
+
+        JsonObject p2 = new JsonObject();
+        p2.addProperty("int", 1);
+
+        JsonObject p3 = new JsonObject();
+        p3.addProperty("double", 52.0);
+
+        array.add(p1);
+        array.add(p2);
+        array.add(p3);
+
+        String msg = gson.toJson(new ClientMessage("testMethod2", array));
+
+        System.out.println("Msg " + msg);
+
+        teriser.handleMessage(msg);
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("ModuleAddTest3")
+    public void ModuleAddTest3() {
+        Gson gson = new GsonBuilder().create();
+        JsonArray array = new JsonArray();
+
+        JsonObject p1 = new JsonObject();
+        JsonArray testdata = new JsonArray();
+        testdata.add("test1");
+        testdata.add("test2");
+        testdata.add("test3");
+
+        p1.add("String[]", testdata);
+
+        JsonArray testdata2 = new JsonArray();
+        testdata2.add(1);
+        testdata2.add(2);
+        testdata2.add(3);
+
+        JsonObject p2 = new JsonObject();
+        p2.add("Integer[]", testdata2);
+
+        array.add(p1);
+        array.add(p2);
+
+        String msg = gson.toJson(new ClientMessage("arrayMethod", array));
+
+        System.out.println("Msg " + msg);
+
+        teriser.handleMessage(msg);
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("customArray")
+    public void customArray() {
+        Gson gson = new GsonBuilder().create();
+        JsonArray array = new JsonArray();
+
+        List<CubeData> list = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            list.add(new CubeData("name" + i));
+        }
+
+        JsonObject p1 = new JsonObject();
+        JsonArray testdata = new JsonArray();
+//        JsonObject test = JsonParser.parseString(gson.toJson(new CubeData("name 1"))).getAsJsonObject();
+//        testdata.add(test);
+        list.forEach(e -> testdata.add(JsonParser.parseString(gson.toJson(e))));
+
+
+        p1.add("CubeData[]", testdata);
+
+        JsonArray testdata2 = new JsonArray();
+        testdata2.add(new CubeData("name4").toString());
+        testdata2.add(new CubeData("name5").toString());
+
+        JsonObject p2 = new JsonObject();
+        p2.add("List<" + CubeData.class.getCanonicalName() + ">", testdata2);
+
+        array.add(p1);
+        array.add(p2);
+
+        String msg = gson.toJson(new ClientMessage("customArray", array));
+
+        System.out.println("Msg " + msg);
+
+        teriser.handleMessage(msg);
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("customClassInfo")
+    public void customClassInfo() {
+        teriser.getMethodInfo();
     }
 
 //    @Test
