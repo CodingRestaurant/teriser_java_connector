@@ -5,6 +5,8 @@
  */
 package com.codrest.teriser_java_connector.testpackage;
 
+import java.util.List;
+
 public class CubeData {
 
     private long id;
@@ -12,6 +14,7 @@ public class CubeData {
     private double prob;
     private String name;
     private User user;
+    private List<Integer> testList;
 
     public CubeData(String name) {
         this.name = name;
@@ -20,16 +23,16 @@ public class CubeData {
     public CubeData() {
     }
 
-    @Override
-    public String toString() {
-        return "CubeData{" +
-                "id=" + id +
-                ", active=" + active +
-                ", prob=" + prob +
-                ", name='" + name + '\'' +
-                ", user=" + user +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "CubeData{" +
+//                "id=" + id +
+//                ", active=" + active +
+//                ", prob=" + prob +
+//                ", name='" + name + '\'' +
+//                ", user=" + user +
+//                '}';
+//    }
 
     public long getId() {
         return id;

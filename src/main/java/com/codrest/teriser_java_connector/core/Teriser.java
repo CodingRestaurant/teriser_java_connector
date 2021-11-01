@@ -11,14 +11,12 @@ import com.codrest.teriser_java_connector.core.net.TeriserClient;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 
 public class Teriser {
 
+    private ArrayList<Class<?>> checkList = new ArrayList<>();
     private String token;
     private MessageReceiver messageReceiver;
     Set<Class<?>> classes = new HashSet<>();
@@ -26,13 +24,21 @@ public class Teriser {
     Map<String, Object> instances = new HashMap<>();
     public TeriserClient socketTest;
 
+
     public Teriser(String token, MessageReceiver messageReceiver) {
         this.token = token;
         this.messageReceiver = messageReceiver;
         messageReceiver.setMessageExecutor(this::handleMessage);
-        socketTest = new TeriserClient(this::request, this::getMethodInfo);
+        initCheckList();
+        socketTest = new TeriserClient(this::request, this::createMethodInfo);
     }
 
+    private void initCheckList() {
+        checkList.add(Integer.class);
+        checkList.add(Double.class);
+        checkList.add(String.class);
+        checkList.add(Character.class);
+    }
 
     /**
      * Add Module to Teriser.
@@ -146,6 +152,127 @@ public class Teriser {
         }
 
         return args;
+    }
+
+    public JsonObject createMethodInfo() {
+        Map<String, List<String>> methodMap = getMethodInfo();
+
+        JsonObject list = new JsonObject();
+
+        for (String key : methodMap.keySet()) {
+            JsonArray parameterArray = new JsonArray();
+            List<String> parameters = methodMap.get(key);
+            for (String p : parameters) {
+                parameterArray.add(p);
+            }
+            JsonObject data = new JsonObject();
+            data.add("parameters", parameterArray);
+            list.add(key, data);
+        }
+
+        list.addProperty("Token", token);
+
+        list.add("Custom", checkCustom());
+
+        return list;
+    }
+
+
+    public JsonArray checkCustom() {
+        Set<Class<?>> customClassSet = new HashSet<>();
+        JsonArray list = new JsonArray();
+        for (String key : methods.keySet()) {
+            Method method = methods.get(key);
+            for (Class<?> type : method.getParameterTypes()) {
+                isCustom(type, customClassSet);
+            }
+            for (Type test : method.getGenericParameterTypes()) {
+                if (test.getTypeName().contains("List")) {
+                    ParameterizedType t = ((ParameterizedType) test);
+                    Type listType = t.getActualTypeArguments()[0];
+                    try {
+                        Class<?> c = Class.forName(listType.getTypeName());
+                        if (!checkList.contains(c)) {
+                            customClassSet.add(c);
+                        }
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        for (Class<?> type : customClassSet) {
+            checkField(type, customClassSet);
+        }
+
+        for (Class<?> type : customClassSet) {
+            list.add(customFieldInfo(type));
+        }
+
+        return list;
+    }
+
+    public JsonObject customFieldInfo(Class<?> targetClass) {
+        JsonArray arr = new JsonArray();
+        for (Field field : targetClass.getDeclaredFields()) {
+            JsonObject json = new JsonObject();
+            json.addProperty(field.getName(), field.getGenericType().toString());
+            arr.add(json);
+        }
+        JsonObject res = new JsonObject();
+        res.add(targetClass.getSimpleName(), arr);
+        return res;
+    }
+
+    private void isCustom(Class<?> targetClass, Set<Class<?>> customClassSet) {
+        if (!targetClass.isPrimitive() && !checkList.contains(targetClass)) {
+            addCustomInfo(targetClass, customClassSet);
+        }
+    }
+
+    private void checkField(Class<?> targetClass, Set<Class<?>> customClassSet) {
+
+        Field[] test = targetClass.getDeclaredFields();
+        for (Field field : test) {
+            Class<?> type = field.getType();
+            if (!type.isPrimitive()) {
+                if (!checkList.contains(type)) {
+                    if (type.getSimpleName().equals("List")) {
+                        return;
+                    }
+                    customClassSet.add(type);
+                    checkField(type, customClassSet);
+                }
+            }
+        }
+    }
+
+    private void addCustomInfo(Class<?> custom, Set<Class<?>> customClassSet) {
+
+        if (custom.getSimpleName().equals("List")) {
+            return;
+        }
+
+        String name = custom.getName();
+        Class<?> type = custom;
+
+        if (name.startsWith("[L") && name.endsWith(";")) {
+            if (checkList.contains(custom.getComponentType())) {
+                return;
+            } else {
+                type = custom.getComponentType();
+            }
+        }
+        customClassSet.add(type);
+//        checkField(custom, customClassSet);
+
+
+//        } else {
+//            for (Field field : custom.getDeclaredFields()) {
+//                customFields.addProperty(field.getName(), field.getType().toString());
+//            }
+//        }
     }
 
     public Map<String, List<String>> getMethodInfo() {

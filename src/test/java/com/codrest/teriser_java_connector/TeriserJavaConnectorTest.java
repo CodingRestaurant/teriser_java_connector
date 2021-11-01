@@ -12,15 +12,21 @@ import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.testpackage.CubeData;
 import com.codrest.teriser_java_connector.testpackage.TestBot3;
+import com.codrest.teriser_java_connector.testpackage.User;
 import com.google.gson.*;
 import org.junit.jupiter.api.*;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TeriserJavaConnectorTest {
 
+    public static ArrayList<Class<?>> checkList = new ArrayList<>();
     MessageReceiver messageReceiver;
     Teriser teriser;
 
@@ -30,6 +36,12 @@ public class TeriserJavaConnectorTest {
         teriser = TeriserJavaConnector.Make("ABC", messageReceiver);
         teriser.addModule(TestBot3.class);
 
+        checkList.add(Integer.class);
+        checkList.add(Double.class);
+        checkList.add(String.class);
+        checkList.add(Character.class);
+        checkList.add(List.class);
+        checkList.add(Array.class);
     }
 
     @Test
@@ -169,7 +181,19 @@ public class TeriserJavaConnectorTest {
     @Order(5)
     @DisplayName("customClassInfo")
     public void customClassInfo() {
-        teriser.getMethodInfo();
+        JsonArray methodInfo = teriser.checkCustom();
+
+//        System.out.println("Method Info");
+//        System.out.println(methodInfo);
+    }
+
+
+    @Test
+    @Order(6)
+    @DisplayName("MethodInfo")
+    public void MethodInfo() {
+        System.out.println(teriser.createMethodInfo());
+
     }
 
 //    @Test

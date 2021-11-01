@@ -21,11 +21,11 @@ import java.util.function.Supplier;
 public class TeriserClient {
 
     private Function<String, String> requestQuery;
-    private Supplier<Map<String, List<String>>> getMethodInfo;
+    private Supplier<JsonObject> getMethodInfo;
     private SocketChannel processServer;
     private AtomicBoolean isConnected = new AtomicBoolean(false);
 
-    public TeriserClient(Function<String, String> requestQuery, Supplier<Map<String, List<String>>> getMethodInfo) {
+    public TeriserClient(Function<String, String> requestQuery, Supplier<JsonObject> getMethodInfo) {
         this.requestQuery = requestQuery;
         this.getMethodInfo = getMethodInfo;
     }
@@ -52,12 +52,11 @@ public class TeriserClient {
 
     private boolean checkToken(String token) {
         try {
-            JsonObject tokenJson = createMethodInfo();
-            tokenJson.addProperty("Token", token);
+            JsonObject method_token = getMethodInfo.get();
 
-            ByteBuffer initBuffer = ByteBuffer.allocate(4 + tokenJson.toString().getBytes(StandardCharsets.UTF_8).length);
-            initBuffer.putInt(tokenJson.toString().getBytes(StandardCharsets.UTF_8).length);
-            initBuffer.put(tokenJson.toString().getBytes(StandardCharsets.UTF_8));
+            ByteBuffer initBuffer = ByteBuffer.allocate(4 + method_token.toString().getBytes(StandardCharsets.UTF_8).length);
+            initBuffer.putInt(method_token.toString().getBytes(StandardCharsets.UTF_8).length);
+            initBuffer.put(method_token.toString().getBytes(StandardCharsets.UTF_8));
             initBuffer.flip();
 
             processServer.write(initBuffer);
@@ -110,24 +109,7 @@ public class TeriserClient {
         return new InetSocketAddress(data.get("address").getAsString(), 25565);
     }
 
-    public JsonObject createMethodInfo() {
-        Map<String, List<String>> methodMap = getMethodInfo.get();
 
-        JsonObject list = new JsonObject();
-
-        for (String key : methodMap.keySet()) {
-            JsonArray parameterArray = new JsonArray();
-            List<String> parameters = methodMap.get(key);
-            for (String p : parameters) {
-                parameterArray.add(p);
-            }
-            JsonObject data = new JsonObject();
-            data.add("parameters", parameterArray);
-            list.add(key, data);
-        }
-
-        return list;
-    }
 
     private void connect(InetSocketAddress serverAddress) {
         try {

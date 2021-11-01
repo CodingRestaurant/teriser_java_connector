@@ -28,6 +28,11 @@ public class TestBot3 {
 //        System.out.println("data " + intList+" string "+stringValue+" doubleValue "+doubleValue+" doubleArray "+Arrays.toString(doubleArray));
 //        return "testMethod";
 //    }
+//
+//    @Api
+//    public String cubeData(CubeData cubeData) {
+//        return"";
+//    }
 
     @Api
     public String arrayMethod(String[] strings, Integer[] ints) {
