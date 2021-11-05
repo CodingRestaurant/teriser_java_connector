@@ -96,8 +96,6 @@ public class Teriser {
         String methodName = jsonObject.get("method").getAsString();
         JsonArray parameters = jsonObject.get("parameters").getAsJsonArray();
 
-        System.out.println("Parameters " + parameters);
-
         Method targetMethod = methods.get(methodName);
         Object[] args = makeArgs(targetMethod, parameters);
 
@@ -143,7 +141,7 @@ public class Teriser {
                     data.remove(json);
                     break;
                 } else if (parameterName.endsWith(type)) {
-                    args[i++] = gson.fromJson(json.get(type), parameterType);
+                    args[i++] = gson.fromJson(json.get(type).getAsString(), parameterType);
                     data.remove(json);
                     break;
                 }
@@ -157,8 +155,11 @@ public class Teriser {
     public JsonObject createMethodInfo() {
         Map<String, List<String>> methodMap = getMethodInfo();
 
-        JsonObject list = new JsonObject();
+        JsonObject root = new JsonObject();
 
+        root.addProperty("Token", token);
+
+        JsonArray method_parameterArray = new JsonArray();
         for (String key : methodMap.keySet()) {
             JsonArray parameterArray = new JsonArray();
             List<String> parameters = methodMap.get(key);
@@ -167,14 +168,15 @@ public class Teriser {
             }
             JsonObject data = new JsonObject();
             data.add("parameters", parameterArray);
-            list.add(key, data);
+            JsonObject method_parameterJson = new JsonObject();
+            method_parameterJson.add(key, data);
+            method_parameterArray.add(method_parameterJson);
         }
+        root.add("apis", method_parameterArray);
 
-        list.addProperty("Token", token);
+        root.add("types", checkCustom());
 
-        list.add("Custom", checkCustom());
-
-        return list;
+        return root;
     }
 
 
@@ -210,18 +212,20 @@ public class Teriser {
             list.add(customFieldInfo(type));
         }
 
+        System.out.println(list);
+
         return list;
     }
 
     public JsonObject customFieldInfo(Class<?> targetClass) {
         JsonArray arr = new JsonArray();
+        JsonObject json = new JsonObject();
         for (Field field : targetClass.getDeclaredFields()) {
-            JsonObject json = new JsonObject();
+//            arr.add(field.getGenericType().toString());
             json.addProperty(field.getName(), field.getGenericType().toString());
-            arr.add(json);
         }
         JsonObject res = new JsonObject();
-        res.add(targetClass.getSimpleName(), arr);
+        res.add(targetClass.getSimpleName(), json);
         return res;
     }
 

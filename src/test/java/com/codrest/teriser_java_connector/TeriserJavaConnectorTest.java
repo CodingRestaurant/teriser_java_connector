@@ -7,21 +7,17 @@ package com.codrest.teriser_java_connector;
 
 
 import com.codrest.teriser_java_connector.core.ClientMessage;
+import com.codrest.teriser_java_connector.core.CustomParser;
 import com.codrest.teriser_java_connector.core.Teriser;
 import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
-import com.codrest.teriser_java_connector.testpackage.CubeData;
 import com.codrest.teriser_java_connector.testpackage.TestBot3;
-import com.codrest.teriser_java_connector.testpackage.User;
 import com.google.gson.*;
 import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TeriserJavaConnectorTest {
@@ -170,7 +166,7 @@ public class TeriserJavaConnectorTest {
         array.add(p1);
         array.add(p2);
 
-        String msg = gson.toJson(new ClientMessage("customArray", array));
+        String msg = gson.toJson(new ClientMessage("customArrayMethod", array));
 
         System.out.println("Msg " + msg);
 
@@ -194,6 +190,177 @@ public class TeriserJavaConnectorTest {
     public void MethodInfo() {
         System.out.println(teriser.createMethodInfo());
 
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("makeArgs")
+    public void makeArgs() {
+        Gson gson = new GsonBuilder().create();
+
+        CubeData data = new CubeData("Name1");
+        User user = new User();
+        user.setid(123456);
+        user.setname("UserName");
+        data.setuser(user);
+
+        JsonObject p1 = new JsonObject();
+        p1.addProperty("CubeData", gson.toJson(data));
+
+        JsonObject p2 = new JsonObject();
+        p2.addProperty("String", "StringValue");
+
+        JsonObject p3 = new JsonObject();
+        p3.addProperty("int", 1);
+
+        JsonObject p4 = new JsonObject();
+        p4.addProperty("double", 2.0);
+//
+        JsonArray arr = new JsonArray();
+        arr.add(gson.toJson(new CubeData("Cube Name1")));
+        arr.add(gson.toJson(new CubeData("Cube Name2")));
+        arr.add(gson.toJson(new CubeData("Cube Name3")));
+        arr.add(gson.toJson(new CubeData("Cube Name4")));
+
+        JsonObject p5 = new JsonObject();
+        p5.add("List<" + CubeData.class.getCanonicalName() + ">", arr);
+
+        JsonArray array = new JsonArray();
+
+        array.add(p1);
+        array.add(p2);
+        array.add(p3);
+        array.add(p4);
+        array.add(p5);
+
+        String msg = gson.toJson(new ClientMessage("allMethod", array));
+        System.out.println("MSG " + msg);
+        //{ "CubeData":[ 1,true,2.0,"",{"User":[1.0,"test"]},[1,2,3,4]]}
+        teriser.handleMessage(msg);
+    }
+
+
+    @Test
+    @Order(8)
+    @DisplayName("CustomParserTest")
+    public void CustomParserTest() {
+        CubeData data = new CubeData("Name1");
+        User user = new User();
+        user.setid(123456);
+        user.setname("UserName");
+        data.setuser(user);
+
+        JsonObject root = new JsonObject();
+
+        JsonArray params = new JsonArray();
+        params.add(1);
+        params.add(true);
+        params.add(2.0);
+
+        JsonObject custom = new JsonObject();
+        JsonArray customParams = new JsonArray();
+        customParams.add(1.0);
+        customParams.add("test");
+        custom.add("User", customParams);
+
+        params.add(custom);
+
+        JsonArray arr = new JsonArray();
+        arr.add(1);
+        arr.add(2);
+        arr.add(3);
+        arr.add(4);
+
+        params.add(arr);
+
+        root.add("CubeData", params);
+
+        Gson gson = new GsonBuilder().create();
+
+        System.out.println("CubeData " + gson.toJson(data));
+        System.out.println("Data " + root);
+        System.out.println(CustomParser.parse(root.toString()));
+    }
+
+    @Test
+    @Order(9)
+    @DisplayName("Test")
+    public void Test() {
+        JsonObject test = new JsonObject();
+
+        Gson gson = new GsonBuilder().create();
+        CubeData data = new CubeData("Name1");
+        User user = new User();
+        user.setid(123456);
+        user.setname("UserName");
+        data.setuser(user);
+
+        JsonObject p1 = new JsonObject();
+        p1.addProperty("CubeData", gson.toJson(data));
+        JsonObject p2 = new JsonObject();
+        p2.addProperty("String", "StringValue");
+        JsonObject p3 = new JsonObject();
+        p3.addProperty("int", 1);
+
+
+        JsonArray arr = new JsonArray();
+        arr.add(p1);
+        arr.add(p2);
+        arr.add(p3);
+
+
+        String msg = gson.toJson(new ClientMessage("allMethod", arr));
+
+
+        JsonArray params = new JsonArray();
+        params.add("StringVlaue");
+        params.add(1);
+        params.add(true);
+        params.add(2.0);
+
+        JsonObject custom = new JsonObject();
+        JsonArray customParams = new JsonArray();
+        customParams.add(1.0);
+        customParams.add("test");
+        custom.add("User", customParams);
+
+        params.add(custom);
+
+        JsonArray parr = new JsonArray();
+        parr.add(1);
+        parr.add(2);
+        parr.add(3);
+        parr.add(4);
+
+        params.add(parr);
+
+        test.add("CubeData", params);
+
+        JsonObject root = new JsonObject();
+        root.addProperty("method", "cubeDataTest");
+
+        JsonArray array = new JsonArray();
+        array.add(test);
+
+        root.add("parameters", array);
+
+        System.out.println("Msg " + msg);
+        System.out.println("new MSG " + root);
+
+        ClassScanner.scanAllClass();
+
+        System.out.println(CustomParser.parse(root.toString()));
+
+
+    }
+
+    @Test
+    @Order(10)
+    @DisplayName("Test2")
+    public void Test2() {
+        Gson gson = new GsonBuilder().create();
+        User test = gson.fromJson("{[1.0,\"test\"]}", User.class);
+        System.out.println("Test " + test);
     }
 
 //    @Test

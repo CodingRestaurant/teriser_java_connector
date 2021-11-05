@@ -1,5 +1,9 @@
 package com.codrest.teriser_java_connector;
 
+import com.codrest.teriser_java_connector.annotation.Api;
+import com.codrest.teriser_java_connector.annotation.UserDefinedClass;
+
+@UserDefinedClass
 public class CubeData {
     private long id;
     private boolean active;
@@ -14,6 +18,7 @@ public class CubeData {
     public CubeData() {
     }
 
+
     @Override
     public String toString() {
         return "CubeData{" +
@@ -25,43 +30,43 @@ public class CubeData {
                 '}';
     }
 
-    public long getId() {
+    public long getid() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setid(long id) {
         this.id = id;
     }
 
-    public boolean isActive() {
+    public boolean isactive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setactive(boolean active) {
         this.active = active;
     }
 
-    public double getProb() {
+    public double getprob() {
         return prob;
     }
 
-    public void setProb(double prob) {
+    public void setprob(double prob) {
         this.prob = prob;
     }
 
-    public String getName() {
+    public String getname() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setname(String name) {
         this.name = name;
     }
 
-    public User getUser() {
+    public User getuser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setuser(User user) {
         this.user = user;
     }
 
