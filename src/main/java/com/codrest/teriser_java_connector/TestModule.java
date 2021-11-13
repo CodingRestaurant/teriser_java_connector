@@ -34,7 +34,7 @@ public class TestModule {
     }
 
     @Api
-    public String customArray(CubeData[] cubeDatas, List<CubeData> cubeDataList) {
+    public String myMethod6(CubeData[] cubeDatas, List<CubeData> cubeDataList) {
         System.out.println("customArray in");
         System.out.println("customs "+Arrays.toString(cubeDatas) +" list "+cubeDataList);
         return "CustomArray Called";

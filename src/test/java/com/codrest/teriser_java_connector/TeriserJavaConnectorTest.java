@@ -12,11 +12,16 @@ import com.codrest.teriser_java_connector.core.Teriser;
 import com.codrest.teriser_java_connector.core.TeriserJavaConnector;
 import com.codrest.teriser_java_connector.core.net.MessageReceiver;
 import com.codrest.teriser_java_connector.testpackage.TestBot3;
+import com.codrest.teriser_java_connector.testpackage.TestBot4;
+import com.codrest.teriser_java_connector.testpackage.test1.SameNameClass;
 import com.google.gson.*;
 import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -31,6 +36,7 @@ public class TeriserJavaConnectorTest {
         messageReceiver = new MessageReceiver();
         teriser = TeriserJavaConnector.Make("ABC", messageReceiver);
         teriser.addModule(TestBot3.class);
+        teriser.addModule(TestBot4.class);
 
         checkList.add(Integer.class);
         checkList.add(Double.class);
@@ -358,9 +364,132 @@ public class TeriserJavaConnectorTest {
     @Order(10)
     @DisplayName("Test2")
     public void Test2() {
+        for (Method method : TestBot3.class.getDeclaredMethods()) {
+            if (method.getName().equals("parameterArrayMethod")) {
+
+                for (Type type : method.getGenericParameterTypes()) {
+                    String typeName = type.getTypeName();
+                    String[] tokens = typeName.split("\\.");
+                    String name = tokens[tokens.length - 1];
+                    if (name.contains(";")) {
+                        System.out.println("array "+name);
+                        name = name.replace(";", "[]");
+                    }
+                    if (type.getTypeName().contains("List")) {
+                        System.out.println("list "+name);
+                        String[] test = type.getTypeName().split("List");
+                        name = "List" + test[test.length - 1];
+                    }
+                    System.out.println(name);
+                }
+
+            }
+        }
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("ParameterOverlapTest")
+    public void ParameterOverlapTest() {
         Gson gson = new GsonBuilder().create();
-        User test = gson.fromJson("{[1.0,\"test\"]}", User.class);
-        System.out.println("Test " + test);
+        JsonArray array = new JsonArray();
+
+        JsonObject p1 = new JsonObject();
+        JsonArray testdata = new JsonArray();
+        testdata.add(JsonParser.parseString(gson.toJson(new SameNameClass("Name1"))));
+        testdata.add(JsonParser.parseString(gson.toJson(new SameNameClass("Name2"))));
+        testdata.add(JsonParser.parseString(gson.toJson(new SameNameClass("Name3"))));
+
+        p1.add("SameNameClass[]", testdata);
+
+        JsonArray testdata2 = new JsonArray();
+        testdata2.add(JsonParser.parseString(gson.toJson(new com.codrest.teriser_java_connector.testpackage.test2.SameNameClass("name4"))));
+        testdata2.add(JsonParser.parseString(gson.toJson(new com.codrest.teriser_java_connector.testpackage.test2.SameNameClass("name5"))));
+        testdata2.add(JsonParser.parseString(gson.toJson(new com.codrest.teriser_java_connector.testpackage.test2.SameNameClass("name6"))));
+
+        JsonObject p2 = new JsonObject();
+        p2.add("SameNameClass[]", testdata2);
+
+        array.add(p2);
+        array.add(p1);
+
+        String msg = gson.toJson(new ClientMessage("parameterArrayMethod", array));
+
+        System.out.println("Msg " + msg);
+
+        teriser.handleMessage(msg);
+
+    }
+
+    @Test
+    @Order(13)
+    @DisplayName("MapTest")
+    public void MapTest() {
+        System.out.println("MSG");
+        System.out.println(teriser.createMethodInfo());
+    }
+
+    @Test
+    @Order(14)
+    @DisplayName("message")
+    public void message() {
+        Gson gson = new GsonBuilder().create();
+
+        JsonObject root = new JsonObject();
+
+
+        root.addProperty("method", "myMethod2");
+
+        JsonArray parameterArray = new JsonArray();
+
+        JsonObject p1 = new JsonObject();
+        p1.addProperty("String", "StringValue");
+
+        parameterArray.add(p1);
+
+        root.add("parameters", parameterArray);
+
+        System.out.println("myMethod2 "+root);
+
+        root = new JsonObject();
+        root.addProperty("method", "myMethod3");
+
+        parameterArray = new JsonArray();
+
+        p1 = new JsonObject();
+        p1.addProperty("String", "StringValue");
+        JsonObject p2 = new JsonObject();
+        p2.addProperty("int", 123);
+
+        parameterArray.add(p1);
+        parameterArray.add(p2);
+
+        root.add("parameters", parameterArray);
+
+        System.out.println("myMethod3 "+ root);
+
+        root = new JsonObject();
+        root.addProperty("method", "myMethod5");
+
+        parameterArray = new JsonArray();
+
+        p1 = new JsonObject();
+        JsonArray a1 = new JsonArray();
+        a1.add("String Arr 1");
+        a1.add("String Arr 2");
+        p1.add("String[]", a1);
+        p2 = new JsonObject();
+        JsonArray a2 = new JsonArray();
+        a2.add(4.0);
+        a2.add(5.0);
+        p2.add("List<"+Double.class.getCanonicalName()+">", a2);
+
+        parameterArray.add(p1);
+        parameterArray.add(p2);
+
+        root.add("parameters", parameterArray);
+
+        System.out.println("myMethod5 "+root);
     }
 
 //    @Test

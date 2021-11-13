@@ -30,7 +30,12 @@ public class ClassScanner {
                 for (Class<?> c : set) {
                     if (c.isAnnotationPresent(UserDefinedClass.class)) {
                         System.out.println("Class "+c);
-                        classMap.put(c.getSimpleName(), c);
+                        /**
+                         * 동일한 이름의 클래스가 여러개이면 감지못함
+                         * 패키지 이름까진 포함해야 될듯함 -> canonicalname 사용
+                         * -> canonical꺼내올수있냐?
+                         */
+                        classMap.put(c.getCanonicalName(), c);
                     }
                 }
             }

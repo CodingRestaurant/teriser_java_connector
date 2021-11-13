@@ -19,16 +19,16 @@ public class CubeData {
     }
 
 
-    @Override
-    public String toString() {
-        return "CubeData{" +
-                "id=" + id +
-                ", active=" + active +
-                ", prob=" + prob +
-                ", name='" + name + '\'' +
-                ", user=" + user +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "CubeData{" +
+//                "id=" + id +
+//                ", active=" + active +
+//                ", prob=" + prob +
+//                ", name='" + name + '\'' +
+//                ", user=" + user +
+//                '}';
+//    }
 
     public long getid() {
         return id;

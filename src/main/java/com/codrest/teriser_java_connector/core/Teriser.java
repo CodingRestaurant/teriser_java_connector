@@ -14,8 +14,14 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.*;
 import java.util.*;
 
+/*
+TODO public methods must be change to private
+ with out addModule and run
+ */
+
 public class Teriser {
 
+    /* key -> 클래스 네임 type -> class object */
     private ArrayList<Class<?>> checkList = new ArrayList<>();
     private String token;
     private MessageReceiver messageReceiver;
@@ -26,10 +32,10 @@ public class Teriser {
 
 
     public Teriser(String token, MessageReceiver messageReceiver) {
+        initCheckList();
         this.token = token;
         this.messageReceiver = messageReceiver;
         messageReceiver.setMessageExecutor(this::handleMessage);
-        initCheckList();
         socketTest = new TeriserClient(this::request, this::createMethodInfo);
     }
 
@@ -124,6 +130,7 @@ public class Teriser {
     public Object[] makeArgs(Method targetMethod, JsonArray data) {
         Object[] args = new Object[targetMethod.getParameterCount()];
 
+
         int i = 0;
         for (Class<?> parameterType : targetMethod.getParameterTypes()) {
             String parameterName = parameterType.getName();
@@ -137,6 +144,7 @@ public class Teriser {
                     data.remove(json);
                     break;
                 } else if (parameterName.startsWith("[L") && parameterName.endsWith(";") && parameterName.contains(type.split("\\[")[0])) {
+                    System.out.println("Data " + json.get(type).toString());
                     args[i++] = gson.fromJson(json.get(type), parameterType);
                     data.remove(json);
                     break;
@@ -186,7 +194,7 @@ public class Teriser {
         for (String key : methods.keySet()) {
             Method method = methods.get(key);
             for (Class<?> type : method.getParameterTypes()) {
-                isCustom(type, customClassSet);
+                addCustom(type, customClassSet);
             }
             for (Type test : method.getGenericParameterTypes()) {
                 if (test.getTypeName().contains("List")) {
@@ -204,15 +212,14 @@ public class Teriser {
             }
         }
 
-        for (Class<?> type : customClassSet) {
+        HashSet<Class<?>> test = new HashSet<>(customClassSet);
+        for (Class<?> type : test) {
             checkField(type, customClassSet);
         }
 
         for (Class<?> type : customClassSet) {
             list.add(customFieldInfo(type));
         }
-
-        System.out.println(list);
 
         return list;
     }
@@ -229,7 +236,7 @@ public class Teriser {
         return res;
     }
 
-    private void isCustom(Class<?> targetClass, Set<Class<?>> customClassSet) {
+    private void addCustom(Class<?> targetClass, Set<Class<?>> customClassSet) {
         if (!targetClass.isPrimitive() && !checkList.contains(targetClass)) {
             addCustomInfo(targetClass, customClassSet);
         }
@@ -279,37 +286,55 @@ public class Teriser {
 //        }
     }
 
+    private List<String> checkHasOverlap(Method method) {
+
+        List<String> names = new ArrayList<>();
+
+        for (Type type : method.getGenericParameterTypes()) {
+            String[] tokens = type.getTypeName().split("\\.");
+            if (!tokens[tokens.length - 1].contains(">")) {
+                names.add(tokens[tokens.length - 1]);
+            }
+        }
+
+        List<String> overlapClassNames = new ArrayList<>();
+
+        for (String name : names) {
+            if (Collections.frequency(names, name) > 1) {
+                overlapClassNames.add(name);
+            }
+        }
+
+        return overlapClassNames;
+    }
+
     public Map<String, List<String>> getMethodInfo() {
         Map<String, List<String>> methodMap = new HashMap<>();
 
-        for (String key : methods.keySet()) {
+        for (String methodKey : methods.keySet()) {
+
             List<String> parameters = new ArrayList<>();
-            Method method = methods.get(key);
+            Method method = methods.get(methodKey);
+
+            List<String> overlapClassNames = checkHasOverlap(method);
 
             for (Type type : method.getGenericParameterTypes()) {
                 String typeName = type.getTypeName();
                 String[] tokens = typeName.split("\\.");
                 String name = tokens[tokens.length - 1];
-                if (name.contains(";")) {
-                    name = name.replace(";", "[]");
+
+                if (overlapClassNames.contains(name)) { // 중복된 타입에 대한 것 풀네임 넣기
+                    name = typeName;
                 }
-                if (type.getTypeName().contains("List")) {
-                    String[] test = type.getTypeName().split("List");
+
+                //리스트의 경우 타입값은 풀네임으로 넘어오고있음
+                if (typeName.contains("List")) {
+                    String[] test = typeName.split("List");
                     name = "List" + test[test.length - 1];
                 }
+
                 parameters.add(name);
             }
-
-//            for (Class<?> parameterType : method.getParameterTypes()) {
-//                String[] tokens = parameterType.getName().split("\\.");
-//
-//                System.out.println(method.getName() + " " + parameterType.getCanonicalName() + " " + tokens[tokens.length - 1]);
-//                String name = tokens[tokens.length - 1];
-//                if (name.contains(";")) {
-//                    name = name.replace(";", "[]");
-//                }
-//                parameters.add(name);
-//            }
             methodMap.put(method.getName(), parameters);
         }
 
