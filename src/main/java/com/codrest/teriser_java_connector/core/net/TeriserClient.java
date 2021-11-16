@@ -125,19 +125,19 @@ public class TeriserClient {
                     break;
                 }
 
-                String error = new String(buffer.array());
-                if (error.startsWith("E01")) {
-                    System.out.println(error);
+                String msg = new String(buffer.array());
+                if (msg.startsWith("E01")) {
+                    System.out.println(msg);
                     stop();
                     break;
                 }
-                if (error.startsWith("E02")) {
-                    System.out.println(error);
+                if (msg.startsWith("E02")) {
+                    System.out.println(msg);
                     stop();
                     break;
                 }
 
-                String result = requestQuery.apply(new String(buffer.array()));
+                String result = requestQuery.apply(msg);
 
                 byte[] arr = result.getBytes(StandardCharsets.UTF_8);
 
