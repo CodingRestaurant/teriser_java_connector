@@ -52,7 +52,7 @@ public class DataPacketBuilder {
     /**
      * Generate Client to Server Message
      * <p>
-     * developerID  Identify hwo you are
+     * developerID  Identify who you are
      * projectID Identify project
      * requestCode Identify message
      * methodName request method name
