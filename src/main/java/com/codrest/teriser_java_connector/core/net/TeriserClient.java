@@ -1,25 +1,21 @@
 package com.codrest.teriser_java_connector.core.net;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import reactor.netty.http.client.HttpClient;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /*
-TODO Remove error stacktrace(time out)
+TODO Remove error stacktrace(time out), connection reset
  */
 
 public class TeriserClient {
@@ -36,22 +32,16 @@ public class TeriserClient {
 
     public void initConnection(String token) {
 
-//        InetSocketAddress serverAddress = getProcessServerAddress(token);
-//
-//        if (Objects.isNull(serverAddress)) {
-//            System.out.println("Server Address is null");
-//            return;
-//        }
-        InetSocketAddress serverAddress = new InetSocketAddress("alice.cs.teriser.codrest.com", 25565);
+        InetSocketAddress serverAddress = getProcessServerAddress(token);
 
+        if (Objects.isNull(serverAddress)) {
+            System.out.println("Server Address is null");
+            return;
+        }
         connect(serverAddress);
 
         checkToken();
         work();
-
-//        if (checkToken()) {
-//            work();
-//        }
     }
 
     private boolean checkToken() {
@@ -64,24 +54,6 @@ public class TeriserClient {
             initBuffer.flip();
 
             processServer.write(initBuffer);
-//            initBuffer = ByteBuffer.allocate(4);
-//
-//            processServer.read(initBuffer);
-//
-//            int size = initBuffer.getInt();
-//
-//            initBuffer = ByteBuffer.allocate(size);
-//
-//            processServer.read(initBuffer);
-//
-//            StringBuilder builder = new StringBuilder();
-//            builder.append(initBuffer.getChar());
-//            builder.append(initBuffer.getChar());
-//
-//            if (builder.toString().equals("OK")) {
-//                System.out.println("Token verify success");
-//                return true;
-//            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,7 +67,7 @@ public class TeriserClient {
         HttpClient client = HttpClient.create();
 
         String res = client.get()
-                .uri("http://teriser.codrest.com/connection/" + "address?TOKEN=" + token)
+                .uri("http://teriser.codrest.com/connection/" + "address?token=" + token)
                 .responseContent()
                 .aggregate()
                 .asString().block();
@@ -109,9 +81,10 @@ public class TeriserClient {
             return null;
         }
 
-        return new InetSocketAddress(data.get("address").getAsString(), 25565);
-    }
+        String address = data.get("response").getAsString() + ".cs.teriser.codrest.com";
 
+        return new InetSocketAddress(address, 25565);
+    }
 
 
     private void connect(InetSocketAddress serverAddress) {
@@ -127,22 +100,21 @@ public class TeriserClient {
 
     /**
      * Packet -> size(int) + data(String)
-     *
-     *
+     * <p>
+     * <p>
      * what if
-     *  요청많으면 문제없이 소화가 가능한가?
-     *  작업 큐를 만들고 꺼내서 써야하나?
+     * 요청많으면 문제없이 소화가 가능한가?
+     * 작업 큐를 만들고 꺼내서 써야하나?
      */
     private void work() {
         System.out.println("Start Receiving method request");
-        System.out.println("Connection state "+isConnected.get());
         while (isConnected.get()) {
             try {
                 ByteBuffer buffer = ByteBuffer.allocate(4);
                 int res = processServer.read(buffer);
 
                 if (res < 0) {
-                    System.out.println("Res "+res);
+                    System.out.println("Res " + res);
                     System.out.println("Size read error");
                     stop();
                     break;
@@ -152,14 +124,12 @@ public class TeriserClient {
 
                 int size = buffer.getInt();
 
-                System.out.println("Size : "+size);
-
                 buffer = ByteBuffer.allocate(size);
 
                 res = processServer.read(buffer);
 
                 if (res < 0) {
-                    System.out.println("Res "+res);
+                    System.out.println("Res " + res);
                     System.out.println("Read data error");
                     stop();
                     break;

@@ -24,14 +24,13 @@ TODO public methods must be change to private
 
 public class Teriser {
 
-    /* key -> 클래스 네임 type -> class object */
     private ArrayList<Class<?>> checkList = new ArrayList<>();
     private String token;
     private MessageReceiver messageReceiver;
-    Set<Class<?>> classes = new HashSet<>();
-    Map<String, Method> methods = new HashMap<>();
-    Map<String, Object> instances = new HashMap<>();
-    public TeriserClient socketTest;
+    private Set<Class<?>> classes = new HashSet<>();
+    private Map<String, Method> methods = new HashMap<>();
+    private Map<String, Object> instances = new HashMap<>();
+    private TeriserClient teriserClient;
     private ExecutorService executor = Executors.newCachedThreadPool();
     private LinkedList<Future<String>> workList = new LinkedList<>();
 
@@ -41,7 +40,7 @@ public class Teriser {
         this.token = token;
         this.messageReceiver = messageReceiver;
         messageReceiver.setMessageExecutor(this::handleMessage);
-        socketTest = new TeriserClient(this::request, this::createMethodInfo);
+        teriserClient = new TeriserClient(this::request, this::createMethodInfo);
     }
 
     private void initCheckList() {
@@ -97,15 +96,15 @@ public class Teriser {
 
     public void run() {
         System.out.println("Teriser client is Running");
-        methods.forEach((name, method) -> System.out.println(name + ":" + method));
-        socketTest.initConnection(token);
+//        methods.forEach((name, method) -> System.out.println(name + ":" + method));
+        teriserClient.initConnection(token);
     }
 
-    public String request(String formattedJson) {
+    private String request(String formattedJson) {
         return messageReceiver.onMessageReceived(formattedJson);
     }
 
-    public String handleMessage(String formattedJson) {
+    private String handleMessage(String formattedJson) {
         JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
         return buildMessage(jsonObject);
     }
@@ -140,7 +139,7 @@ public class Teriser {
         return msg;
     }
 
-    public Object[] makeArgs(Method targetMethod, JsonArray data) {
+    private Object[] makeArgs(Method targetMethod, JsonArray data) {
         Object[] args = new Object[targetMethod.getParameterCount()];
 
 
@@ -173,7 +172,7 @@ public class Teriser {
         return args;
     }
 
-    public JsonObject createMethodInfo() {
+    private JsonObject createMethodInfo() {
         Map<String, List<String>> methodMap = getMethodInfo();
 
         JsonObject root = new JsonObject();
@@ -201,7 +200,7 @@ public class Teriser {
     }
 
 
-    public JsonArray checkCustom() {
+    private JsonArray checkCustom() {
         Set<Class<?>> customClassSet = new HashSet<>();
         JsonArray list = new JsonArray();
         for (String key : methods.keySet()) {
@@ -240,11 +239,9 @@ public class Teriser {
         return list;
     }
 
-    public JsonObject customFieldInfo(Class<?> targetClass) {
-        JsonArray arr = new JsonArray();
+    private JsonObject customFieldInfo(Class<?> targetClass) {
         JsonObject json = new JsonObject();
         for (Field field : targetClass.getDeclaredFields()) {
-//            arr.add(field.getGenericType().toString());
             json.addProperty(field.getName(), field.getGenericType().toString());
         }
         JsonObject res = new JsonObject();
@@ -294,14 +291,6 @@ public class Teriser {
             }
         }
         customClassSet.add(type);
-//        checkField(custom, customClassSet);
-
-
-//        } else {
-//            for (Field field : custom.getDeclaredFields()) {
-//                customFields.addProperty(field.getName(), field.getType().toString());
-//            }
-//        }
     }
 
     private List<String> checkHasOverlap(Method method) {
@@ -326,7 +315,7 @@ public class Teriser {
         return overlapClassNames;
     }
 
-    public Map<String, List<String>> getMethodInfo() {
+    private Map<String, List<String>> getMethodInfo() {
         Map<String, List<String>> methodMap = new HashMap<>();
 
         for (String methodKey : methods.keySet()) {
