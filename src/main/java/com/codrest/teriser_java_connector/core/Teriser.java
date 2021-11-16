@@ -156,7 +156,6 @@ public class Teriser {
                     data.remove(json);
                     break;
                 } else if (parameterName.startsWith("[L") && parameterName.endsWith(";") && parameterName.contains(type.split("\\[")[0])) {
-                    System.out.println("Data " + json.get(type).toString());
                     args[i++] = gson.fromJson(json.get(type), parameterType);
                     data.remove(json);
                     break;

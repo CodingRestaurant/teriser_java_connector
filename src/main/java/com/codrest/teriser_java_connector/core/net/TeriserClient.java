@@ -92,7 +92,6 @@ public class TeriserClient {
             processServer = SocketChannel.open();
             processServer.connect(serverAddress);
             isConnected.set(true);
-            System.out.println("Connect " + processServer.isConnected());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -100,11 +99,6 @@ public class TeriserClient {
 
     /**
      * Packet -> size(int) + data(String)
-     * <p>
-     * <p>
-     * what if
-     * 요청많으면 문제없이 소화가 가능한가?
-     * 작업 큐를 만들고 꺼내서 써야하나?
      */
     private void work() {
         System.out.println("Start Receiving method request");
@@ -114,8 +108,6 @@ public class TeriserClient {
                 int res = processServer.read(buffer);
 
                 if (res < 0) {
-                    System.out.println("Res " + res);
-                    System.out.println("Size read error");
                     stop();
                     break;
                 }
@@ -129,8 +121,6 @@ public class TeriserClient {
                 res = processServer.read(buffer);
 
                 if (res < 0) {
-                    System.out.println("Res " + res);
-                    System.out.println("Read data error");
                     stop();
                     break;
                 }
