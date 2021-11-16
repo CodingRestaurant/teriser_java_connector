@@ -15,7 +15,7 @@ public class TeriserJavaConnector {
         return new Teriser(token, new MessageReceiver());
     }
 
-    public static Teriser Make(@NotNull String token, MessageReceiver messageReceiver){
+    private static Teriser Make(@NotNull String token, MessageReceiver messageReceiver){
 
         return new Teriser(token, messageReceiver);
     }
