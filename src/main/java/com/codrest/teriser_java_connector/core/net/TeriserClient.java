@@ -18,6 +18,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/*
+TODO Remove error stacktrace(time out)
+ */
+
 public class TeriserClient {
 
     private Function<String, String> requestQuery;
@@ -38,29 +42,28 @@ public class TeriserClient {
 //            System.out.println("Server Address is null");
 //            return;
 //        }
-        InetSocketAddress serverAddress = new InetSocketAddress("cs0.teriser.codrest.com", 25565);
+        InetSocketAddress serverAddress = new InetSocketAddress("alice.cs.teriser.codrest.com", 25565);
 
         connect(serverAddress);
 
-        checkToken(token);
+        checkToken();
         work();
 
-//        if (checkToken(token)) {
+//        if (checkToken()) {
 //            work();
 //        }
     }
 
-    private boolean checkToken(String token) {
+    private boolean checkToken() {
         try {
-            JsonObject method_token = getMethodInfo.get();
+            JsonObject methodInfo = getMethodInfo.get();
 
-            ByteBuffer initBuffer = ByteBuffer.allocate(4 + method_token.toString().getBytes(StandardCharsets.UTF_8).length);
-            initBuffer.putInt(method_token.toString().getBytes(StandardCharsets.UTF_8).length);
-            initBuffer.put(method_token.toString().getBytes(StandardCharsets.UTF_8));
+            ByteBuffer initBuffer = ByteBuffer.allocate(4 + methodInfo.toString().getBytes(StandardCharsets.UTF_8).length);
+            initBuffer.putInt(methodInfo.toString().getBytes(StandardCharsets.UTF_8).length);
+            initBuffer.put(methodInfo.toString().getBytes(StandardCharsets.UTF_8));
             initBuffer.flip();
 
             processServer.write(initBuffer);
-
 //            initBuffer = ByteBuffer.allocate(4);
 //
 //            processServer.read(initBuffer);
@@ -132,10 +135,18 @@ public class TeriserClient {
      */
     private void work() {
         System.out.println("Start Receiving method request");
+        System.out.println("Connection state "+isConnected.get());
         while (isConnected.get()) {
             try {
                 ByteBuffer buffer = ByteBuffer.allocate(4);
-                processServer.read(buffer);
+                int res = processServer.read(buffer);
+
+                if (res < 0) {
+                    System.out.println("Res "+res);
+                    System.out.println("Size read error");
+                    stop();
+                    break;
+                }
 
                 buffer.flip();
 
@@ -145,19 +156,23 @@ public class TeriserClient {
 
                 buffer = ByteBuffer.allocate(size);
 
-                processServer.read(buffer);
+                res = processServer.read(buffer);
 
-                System.out.println("Data : "+ new String(buffer.array()));
+                if (res < 0) {
+                    System.out.println("Res "+res);
+                    System.out.println("Read data error");
+                    stop();
+                    break;
+                }
 
                 String error = new String(buffer.array());
                 if (error.startsWith("E01")) {
                     System.out.println("Server throw error");
                     stop();
+                    break;
                 }
 
                 String result = requestQuery.apply(new String(buffer.array()));
-
-                System.out.println("method request result : "+result);
 
                 byte[] arr = result.getBytes(StandardCharsets.UTF_8);
 
@@ -167,8 +182,6 @@ public class TeriserClient {
                 resultBuffer.flip();
 
                 processServer.write(resultBuffer);
-
-                System.out.println("After write");
             } catch (Exception e) {
                 e.printStackTrace();
                 stop();

@@ -40,4 +40,68 @@ public class TestModule {
         return "CustomArray Called";
     }
 
+    @Api
+    public String myMethod7() {
+        System.out.println("myMethod7 called");
+        System.out.println("Start sleep");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("End sleep");
+        return "Sleep 1 second";
+    }
+
+    @Api
+    public String myMethod8() {
+        System.out.println("myMethod8 called");
+        System.out.println("Start sleep");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("End sleep");
+        return "Sleep 3 second";
+    }
+
+    @Api
+    public String myMethod9() {
+        System.out.println("myMethod9 called");
+        System.out.println("Start sleep");
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("End sleep");
+        return "Sleep 5 second";
+    }
+
+    @Api
+    public String myMethod10() {
+        System.out.println("myMethod10 called");
+        System.out.println("Start sleep");
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("End sleep");
+        return "Sleep 10 second";
+    }
+
+    @Api
+    public String myMethod11() {
+        System.out.println("myMethod11 called");
+        System.out.println("Start sleep");
+        try {
+            Thread.sleep(30000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("End sleep");
+        return "Sleep 30 second";
+    }
 }

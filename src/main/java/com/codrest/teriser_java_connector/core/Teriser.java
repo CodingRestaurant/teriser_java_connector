@@ -13,6 +13,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /*
 TODO public methods must be change to private
@@ -29,6 +32,8 @@ public class Teriser {
     Map<String, Method> methods = new HashMap<>();
     Map<String, Object> instances = new HashMap<>();
     public TeriserClient socketTest;
+    private ExecutorService executor = Executors.newCachedThreadPool();
+    private LinkedList<Future<String>> workList = new LinkedList<>();
 
 
     public Teriser(String token, MessageReceiver messageReceiver) {
@@ -44,6 +49,9 @@ public class Teriser {
         checkList.add(Double.class);
         checkList.add(String.class);
         checkList.add(Character.class);
+        checkList.add(ArrayList.class);
+        checkList.add(Object.class);
+        checkList.add(Array.class);
     }
 
     /**
@@ -99,6 +107,11 @@ public class Teriser {
 
     public String handleMessage(String formattedJson) {
         JsonObject jsonObject = JsonParser.parseString(formattedJson).getAsJsonObject();
+        return buildMessage(jsonObject);
+    }
+
+
+    private String buildMessage(JsonObject jsonObject) {
         String methodName = jsonObject.get("method").getAsString();
         JsonArray parameters = jsonObject.get("parameters").getAsJsonArray();
 
@@ -193,12 +206,15 @@ public class Teriser {
         JsonArray list = new JsonArray();
         for (String key : methods.keySet()) {
             Method method = methods.get(key);
-            for (Class<?> type : method.getParameterTypes()) {
-                addCustom(type, customClassSet);
-            }
-            for (Type test : method.getGenericParameterTypes()) {
-                if (test.getTypeName().contains("List")) {
-                    ParameterizedType t = ((ParameterizedType) test);
+            Class<?>[] typeClasses = method.getParameterTypes();
+            Type[] types = method.getGenericParameterTypes();
+
+            for (int i = 0; i < typeClasses.length; i++) {
+                Class<?> typeClass = typeClasses[i];
+                Type type = types[i];
+                addCustom(typeClass, customClassSet);
+                if (type.getTypeName().contains("List")) {
+                    ParameterizedType t = ((ParameterizedType) type);
                     Type listType = t.getActualTypeArguments()[0];
                     try {
                         Class<?> c = Class.forName(listType.getTypeName());
@@ -238,7 +254,9 @@ public class Teriser {
 
     private void addCustom(Class<?> targetClass, Set<Class<?>> customClassSet) {
         if (!targetClass.isPrimitive() && !checkList.contains(targetClass)) {
-            addCustomInfo(targetClass, customClassSet);
+            if (!targetClass.getCanonicalName().contains("[]")) {
+                addCustomInfo(targetClass, customClassSet);
+            }
         }
     }
 
