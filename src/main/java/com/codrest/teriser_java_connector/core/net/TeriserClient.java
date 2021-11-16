@@ -167,7 +167,12 @@ public class TeriserClient {
 
                 String error = new String(buffer.array());
                 if (error.startsWith("E01")) {
-                    System.out.println("Server throw error");
+                    System.out.println(error);
+                    stop();
+                    break;
+                }
+                if (error.startsWith("E02")) {
+                    System.out.println(error);
                     stop();
                     break;
                 }
