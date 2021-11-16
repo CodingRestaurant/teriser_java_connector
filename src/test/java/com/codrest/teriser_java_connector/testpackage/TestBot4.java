@@ -1,6 +1,5 @@
 package com.codrest.teriser_java_connector.testpackage;
 
-import com.codrest.teriser_java_connector.CubeData;
 import com.codrest.teriser_java_connector.annotation.Api;
 import com.codrest.teriser_java_connector.testpackage.test1.SameNameClass;
 
@@ -33,11 +32,6 @@ public class TestBot4 {
     public String primitiveArrayOverlapMethod(String[] string1, String[] string2,
                                               int[] int1, int[] int2,
                                               char[] char1, char[] char2) {
-        return "";
-    }
-
-    @Api
-    public String sameTypeArrayMethod(CubeData[] cube1, CubeData[] cube2) {
         return "";
     }
 
