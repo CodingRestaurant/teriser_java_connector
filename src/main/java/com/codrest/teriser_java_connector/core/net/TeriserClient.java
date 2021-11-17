@@ -14,10 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-/*
-TODO Remove error stacktrace(time out), connection reset
- */
-
 public class TeriserClient {
 
     private Function<String, String> requestQuery;
@@ -56,7 +52,6 @@ public class TeriserClient {
             processServer.write(initBuffer);
 
         } catch (Exception e) {
-            e.printStackTrace();
             stop();
             return false;
         }
@@ -148,7 +143,6 @@ public class TeriserClient {
 
                 processServer.write(resultBuffer);
             } catch (Exception e) {
-                e.printStackTrace();
                 stop();
                 return;
             }

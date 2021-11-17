@@ -17,10 +17,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-/*
-TODO public methods must be change to private
- with out addModule and run
- */
 
 public class Teriser {
 
