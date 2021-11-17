@@ -13,9 +13,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 
 public class Teriser {
@@ -27,8 +24,6 @@ public class Teriser {
     private Map<String, Method> methods = new HashMap<>();
     private Map<String, Object> instances = new HashMap<>();
     private TeriserClient teriserClient;
-    private ExecutorService executor = Executors.newCachedThreadPool();
-    private LinkedList<Future<String>> workList = new LinkedList<>();
 
 
     public Teriser(String token, MessageReceiver messageReceiver) {
